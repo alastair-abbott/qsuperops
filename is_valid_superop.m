@@ -44,13 +44,13 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             AO = parties{2}{2};
             F = parties{3}{1};
             
-            dO = prod(dims([P, AO])); % product of output dims
+            d_O = prod(dims([P, AO])); % product of output dims
             
             % Project W onto the space of valid processes
             Wproj = W - (tr_replace(W,F,dims) - tr_replace(W,[AO,F],dims)); % (1-AO)F
             Wproj = Wproj - (tr_replace(Wproj,[AI,AO,F],dims) - tr_replace(Wproj,[P,AI,AO,F],dims)); % (1-P)AF
             
-            is_normalised = abs(trace(W) - dO) < tol;
+            is_normalised = abs(trace(W) - d_O) < tol;
             is_in_valid_space = matrix_is_equal(W,Wproj,tol);
               
         case 2
@@ -64,7 +64,7 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             B = [BI, BO];
             F = parties{4}{1};
             
-            dO = prod(dims([P, AO, BO])); % product of output dims
+            d_O = prod(dims([P, AO, BO])); % product of output dims
             
             % Project W onto the space of valid processes
             Wproj = W - (tr_replace(W,[B,F],dims) - tr_replace(W,[AO,B,F],dims)); % (1-AO)BF
@@ -73,7 +73,7 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
                              - tr_replace(Wproj,[BO,F],dims) + tr_replace(Wproj,[AO,BO,F],dims)); % (1-AO)(1-BO)F
             Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[P,A,B,F],dims)); % (1-P)ABF
             
-            is_normalised = abs(trace(W) - dO) < tol;
+            is_normalised = abs(trace(W) - d_O) < tol;
             is_in_valid_space = matrix_is_equal(W,Wproj,tol);
            
         case 3
@@ -90,7 +90,7 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             C = [CI, CO];
             F = parties{5}{1};
             
-            dO = prod(dims([P,AO,BO,CO])); % product of output dims
+            d_O = prod(dims([P,AO,BO,CO])); % product of output dims
             
             Wproj = W - (tr_replace(W,[B,C,F],dims) - tr_replace(W,[AO,B,C,F],dims)); % (1-AO)BCF
             Wproj = Wproj - (tr_replace(Wproj,[A,C,F],dims) - tr_replace(Wproj,[A,BO,C,F],dims)); % (1-BO)ACF
@@ -109,11 +109,70 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             
             Wproj = Wproj - (tr_replace(Wproj,[A,B,C,F],dims) - tr_replace(Wproj,[P,A,B,C,F],dims)); % (1-P)ABCF
             
-            is_normalised = abs(trace(W) - dO) < tol;
+            is_normalised = abs(trace(W) - d_O) < tol;
             is_in_valid_space = matrix_is_equal(W,Wproj,tol);
             
+        case 4
+            %%
+            P = parties{1}{2};
+            AI = parties{2}{1};
+            AO = parties{2}{2};
+            A = [AI, AO];
+            BI = parties{3}{1};
+            BO = parties{3}{2};
+            B = [BI, BO];
+            CI = parties{4}{1};
+            CO = parties{4}{2};
+            C = [CI, CO];
+            DI = parties{5}{1};
+            DO = parties{5}{2};
+            D = [DI, DO];
+            F = parties{6}{1};
+            
+            d_O = prod(dims([P,AO,BO,CO,DO])); % product of output dims
+            
+            Wproj = W - (tr_replace(W,[B,C,D,F],dims) - tr_replace(W,[AO,B,C,D,F],dims)); % (1-AO)BCDF
+            Wproj = Wproj - (tr_replace(Wproj,[A,C,D,F],dims) - tr_replace(Wproj,[A,BO,C,D,F],dims)); % (1-BO)ACDF
+            Wproj = Wproj - (tr_replace(Wproj,[A,B,D,F],dims) - tr_replace(Wproj,[A,B,CO,D,F],dims)); % (1-CO)ABDF
+            Wproj = Wproj - (tr_replace(Wproj,[A,B,C,F],dims) - tr_replace(Wproj,[A,B,C,DO,F],dims)); % (1-DO)ABCF
+            
+            Wproj = Wproj - (tr_replace(Wproj,[C,D,F],dims) - tr_replace(Wproj,[AO,C,D,F],dims) ...
+                             - tr_replace(Wproj,[BO,C,D,F],dims) + tr_replace(Wproj,[AO,BO,C,D,F],dims)); % (1-AO)(1-BO)CDF
+            Wproj = Wproj - (tr_replace(Wproj,[B,D,F],dims) - tr_replace(Wproj,[AO,B,D,F],dims) ...
+                             - tr_replace(Wproj,[B,CO,D,F],dims) + tr_replace(Wproj,[AO,B,CO,D,F],dims)); % (1-AO)B(1-CO)DF
+            Wproj = Wproj - (tr_replace(Wproj,[B,C,F],dims) - tr_replace(Wproj,[AO,B,C,F],dims) ...
+                             - tr_replace(Wproj,[B,C,DO,F],dims) + tr_replace(Wproj,[AO,B,C,DO,F],dims)); % (1-AO)BC(1-DO)F
+            Wproj = Wproj - (tr_replace(Wproj,[A,D,F],dims) - tr_replace(Wproj,[A,BO,D,F],dims) ...
+                             - tr_replace(Wproj,[A,CO,D,F],dims) + tr_replace(Wproj,[A,BO,CO,D,F],dims)); % A(1-BO)(1-CO)DF
+            Wproj = Wproj - (tr_replace(Wproj,[A,C,F],dims) - tr_replace(Wproj,[A,BO,C,F],dims) ...
+                             - tr_replace(Wproj,[A,C,DO,F],dims) + tr_replace(Wproj,[A,BO,C,DO,F],dims)); % A(1-BO)C(1-DO)F
+            Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[A,B,CO,F],dims) ...
+                             - tr_replace(Wproj,[A,B,DO,F],dims) + tr_replace(Wproj,[A,B,CO,D0,F],dims)); % AB(1-CO)(1-DO)F
+            
+            Wproj = Wproj - (tr_replace(Wproj,[D,F],dims) - tr_replace(Wproj,[AO,D,F],dims) - tr_replace(Wproj,[BO,D,F],dims) - tr_replace(Wproj,[CO,D,F],dims) ...
+                             + tr_replace(Wproj,[AO,BO,D,F],dims) + tr_replace(Wproj,[AO,CO,D,F],dims) + tr_replace(Wproj,[BO,CO,D,F],dims) ...
+                             - tr_replace(Wproj,[AO,BO,CO,D,F],dims)); % (1-AO)(1-BO)(1-CO)DF
+            Wproj = Wproj - (tr_replace(Wproj,[C,F],dims) - tr_replace(Wproj,[AO,C,F],dims) - tr_replace(Wproj,[BO,C,F],dims) - tr_replace(Wproj,[C,DO,F],dims) ...
+                             + tr_replace(Wproj,[AO,BO,C,F],dims) + tr_replace(Wproj,[AO,C,DO,F],dims) + tr_replace(Wproj,[BO,C,DO,F],dims) ...
+                             - tr_replace(Wproj,[AO,BO,C,DO,F],dims)); % (1-AO)(1-BO)C(1-DO)F
+            Wproj = Wproj - (tr_replace(Wproj,[B,F],dims) - tr_replace(Wproj,[AO,B,F],dims) - tr_replace(Wproj,[B,CO,F],dims) - tr_replace(Wproj,[B,DO,F],dims) ...
+                             + tr_replace(Wproj,[AO,B,CO,F],dims) + tr_replace(Wproj,[AO,B,DO,F],dims) + tr_replace(Wproj,[B,CO,DO,F],dims) ...
+                             - tr_replace(Wproj,[AO,B,CO,DO,F],dims)); % (1-AO)B(1-CO)(1-DO)F
+            Wproj = Wproj - (tr_replace(Wproj,[A,F],dims) - tr_replace(Wproj,[A,BO,F],dims) - tr_replace(Wproj,[A,CO,F],dims) - tr_replace(Wproj,[A,DO,F],dims) ...
+                             + tr_replace(Wproj,[A,BO,CO,F],dims) + tr_replace(Wproj,[A,BO,DO,F],dims) + tr_replace(Wproj,[A,CO,DO,F],dims) ...
+                             - tr_replace(Wproj,[A,BO,CO,DO,F],dims)); % A(1-BO)(1-CO)(1-DO)F
+
+            Wproj = Wproj - (tr_replace(Wproj,[F],dims) - tr_replace(Wproj,[AO,F],dims) - tr_replace(Wproj,[BO,F],dims) - tr_replace(Wproj,[CO,F],dims) - tr_replace(Wproj,[DO,F],dims) ...
+                             + tr_replace(Wproj,[AO,BO,F],dims) + tr_replace(Wproj,[AO,CO,F],dims) + tr_replace(Wproj,[AO,DO,F],dims) + tr_replace(Wproj,[BO,CO,F],dims) + tr_replace(Wproj,[BO,DO,F],dims) + tr_replace(Wproj,[CO,DO,F],dims) ...
+                             - tr_replace(Wproj,[AO,BO,CO,F],dims) - tr_replace(Wproj,[AO,BO,DO,F],dims) - tr_replace(Wproj,[AO,CO,DO,F],dims) - tr_replace(Wproj,[BO,CO,DO,F],dims) ...
+                             + tr_replace(Wproj,[AO,B0,CO,DO,F],dims)); % (1-AO)(1-BO)(1-CO)(1-DO)F
+            
+            Wproj = Wproj - (tr_replace(Wproj,[A,B,C,D,F],dims) - tr_replace(Wproj,[P,A,B,C,D,F],dims)); % (1-P)ABCDF
+            
+            is_normalised = abs(trace(W) - d_O) < tol;
+            is_in_valid_space = matrix_is_equal(W,Wproj,tol);
         otherwise
-            disp('Check currently not implemented for this number of parties.');
+            disp('Check currently only implement up to N=4.');
             is_in_valid_space = false;
     end
     
