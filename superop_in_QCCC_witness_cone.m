@@ -58,12 +58,12 @@ function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
                 constr = [constr, T_PAF{i} >= 0];
             end
             
-            S_PAF_proj = S_PAF - (trRep(S_PAF,F,dims) - trRep(S_PAF,[AO,F],dims));
+            S_PAF_proj = S_PAF - (tr_replace(S_PAF,F,dims) - tr_replace(S_PAF,[AO,F],dims));
             
             constr = [constr, S_PAF_proj == 0];
             
             if d_P ~= 1
-                constr = [constr, S_P - (trRep(S_P,[AI,AO,F],dims) - trRep(S_P,[P,AI,AO,F],dims)) == 0];
+                constr = [constr, S_P - (tr_replace(S_P,[AI,AO,F],dims) - tr_replace(S_P,[P,AI,AO,F],dims)) == 0];
             end
             
         case 2
@@ -105,15 +105,15 @@ function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
                 constr = [constr, T_PABF{i} >= 0, T_PBAF{i} >= 0];
             end
             
-            S_PABF_proj = S_PABF - (trRep(S_PABF,F,dims) - trRep(S_PABF,[BO,F],dims));
-            S_PABF_proj = S_PABF_proj - (trRep(S_PABF_proj,[BI,BO,F],dims) - trRep(S_PABF_proj,[AO,BI,BO,F],dims));
-            S_PBAF_proj = S_PBAF - (trRep(S_PBAF,F,dims) - trRep(S_PBAF,[AO,F],dims));
-            S_PBAF_proj = S_PBAF_proj - (trRep(S_PBAF_proj,[AI,AO,F],dims) - trRep(S_PBAF_proj,[AI,AO,BO,F],dims));
+            S_PABF_proj = S_PABF - (tr_replace(S_PABF,F,dims) - tr_replace(S_PABF,[BO,F],dims));
+            S_PABF_proj = S_PABF_proj - (tr_replace(S_PABF_proj,[BI,BO,F],dims) - tr_replace(S_PABF_proj,[AO,BI,BO,F],dims));
+            S_PBAF_proj = S_PBAF - (tr_replace(S_PBAF,F,dims) - tr_replace(S_PBAF,[AO,F],dims));
+            S_PBAF_proj = S_PBAF_proj - (tr_replace(S_PBAF_proj,[AI,AO,F],dims) - tr_replace(S_PBAF_proj,[AI,AO,BO,F],dims));
             
             constr = [constr, S_PABF_proj == 0, S_PBAF_proj == 0];
             
             if d_P ~= 1
-                constr = [constr, S_P - (trRep(S_P,[AI,AO,BI,BO,F],dims) - trRep(S_P,[P,AI,AO,BI,BO,F],dims)) == 0];
+                constr = [constr, S_P - (tr_replace(S_P,[AI,AO,BI,BO,F],dims) - tr_replace(S_P,[P,AI,AO,BI,BO,F],dims)) == 0];
             end
             
         case 3
@@ -193,27 +193,27 @@ function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
                 constr = [constr, T_PABCF{i} >= 0, T_PACBF{i} >= 0, T_PBACF{i} >= 0, T_PBCAF{i} >= 0, T_PCABF{i} >= 0, T_PCBAF{i} >= 0];
             end
             
-            S_PABCF_proj = S_PABCF - ( trRep(S_PABCF,F,dims) - trRep(S_PABCF,[CO,F],dims) );
-            S_PABCF_proj = S_PABCF_proj - ( trRep(S_PABCF_proj,[CI,CO,F],dims) - trRep(S_PABCF_proj,[BO,CI,CO,F],dims) );
-            S_PACBF_proj = S_PACBF - ( trRep(S_PACBF,F,dims) - trRep(S_PACBF,[BO,F],dims) );
-            S_PACBF_proj = S_PACBF_proj - ( trRep(S_PACBF_proj,[BI,BO,F],dims) - trRep(S_PACBF_proj,[BI,BO,CO,F],dims) );
-            S_PBACF_proj = S_PBACF - ( trRep(S_PBACF,F,dims) - trRep(S_PBACF,[CO,F],dims) );
-            S_PBACF_proj = S_PBACF_proj - ( trRep(S_PBACF_proj,[CI,CO,F],dims) - trRep(S_PBACF_proj,[AO,CI,CO,F],dims) );
-            S_PBCAF_proj = S_PBCAF - ( trRep(S_PBCAF,F,dims) - trRep(S_PBCAF,[AO,F],dims) );
-            S_PBCAF_proj = S_PBCAF_proj - ( trRep(S_PBCAF_proj,[AI,AO,F],dims) - trRep(S_PBCAF_proj,[AI,AO,CO,F],dims) );
-            S_PCABF_proj = S_PCABF - ( trRep(S_PCABF,F,dims) - trRep(S_PCABF,[BO,F],dims) );
-            S_PCABF_proj = S_PCABF_proj - ( trRep(S_PCABF_proj,[BI,BO,F],dims) - trRep(S_PCABF_proj,[AO,BI,BO,F],dims) );
-            S_PCBAF_proj = S_PCBAF - ( trRep(S_PCBAF,F,dims) - trRep(S_PCBAF,[AO,F],dims) );
-            S_PCBAF_proj = S_PCBAF_proj - ( trRep(S_PCBAF_proj,[AI,AO,F],dims) - trRep(S_PCBAF_proj,[AI,AO,BO,F],dims) );
+            S_PABCF_proj = S_PABCF - ( tr_replace(S_PABCF,F,dims) - tr_replace(S_PABCF,[CO,F],dims) );
+            S_PABCF_proj = S_PABCF_proj - ( tr_replace(S_PABCF_proj,[CI,CO,F],dims) - tr_replace(S_PABCF_proj,[BO,CI,CO,F],dims) );
+            S_PACBF_proj = S_PACBF - ( tr_replace(S_PACBF,F,dims) - tr_replace(S_PACBF,[BO,F],dims) );
+            S_PACBF_proj = S_PACBF_proj - ( tr_replace(S_PACBF_proj,[BI,BO,F],dims) - tr_replace(S_PACBF_proj,[BI,BO,CO,F],dims) );
+            S_PBACF_proj = S_PBACF - ( tr_replace(S_PBACF,F,dims) - tr_replace(S_PBACF,[CO,F],dims) );
+            S_PBACF_proj = S_PBACF_proj - ( tr_replace(S_PBACF_proj,[CI,CO,F],dims) - tr_replace(S_PBACF_proj,[AO,CI,CO,F],dims) );
+            S_PBCAF_proj = S_PBCAF - ( tr_replace(S_PBCAF,F,dims) - tr_replace(S_PBCAF,[AO,F],dims) );
+            S_PBCAF_proj = S_PBCAF_proj - ( tr_replace(S_PBCAF_proj,[AI,AO,F],dims) - tr_replace(S_PBCAF_proj,[AI,AO,CO,F],dims) );
+            S_PCABF_proj = S_PCABF - ( tr_replace(S_PCABF,F,dims) - tr_replace(S_PCABF,[BO,F],dims) );
+            S_PCABF_proj = S_PCABF_proj - ( tr_replace(S_PCABF_proj,[BI,BO,F],dims) - tr_replace(S_PCABF_proj,[AO,BI,BO,F],dims) );
+            S_PCBAF_proj = S_PCBAF - ( tr_replace(S_PCBAF,F,dims) - tr_replace(S_PCBAF,[AO,F],dims) );
+            S_PCBAF_proj = S_PCBAF_proj - ( tr_replace(S_PCBAF_proj,[AI,AO,F],dims) - tr_replace(S_PCBAF_proj,[AI,AO,BO,F],dims) );
               
             constr = [constr, S_PABCF_proj == 0, S_PACBF_proj == 0, S_PBACF_proj == 0, S_PBCAF_proj == 0, S_PCABF_proj == 0, S_PCBAF_proj == 0];
        
-            constr = [constr, S_PA - ( trRep(S_PA,[BI,BO,CI,CO,F],dims) - trRep(S_PA,[AO,BI,BO,CI,CO,F],dims) ) == 0];
-            constr = [constr, S_PB - ( trRep(S_PB,[AI,AO,CI,CO,F],dims) - trRep(S_PB,[AI,AO,BO,CI,CO,F],dims) ) == 0];
-            constr = [constr, S_PC - ( trRep(S_PC,[AI,AO,BI,BO,F],dims) - trRep(S_PC,[AI,AO,BI,BO,CO,F],dims) ) == 0];
+            constr = [constr, S_PA - ( tr_replace(S_PA,[BI,BO,CI,CO,F],dims) - tr_replace(S_PA,[AO,BI,BO,CI,CO,F],dims) ) == 0];
+            constr = [constr, S_PB - ( tr_replace(S_PB,[AI,AO,CI,CO,F],dims) - tr_replace(S_PB,[AI,AO,BO,CI,CO,F],dims) ) == 0];
+            constr = [constr, S_PC - ( tr_replace(S_PC,[AI,AO,BI,BO,F],dims) - tr_replace(S_PC,[AI,AO,BI,BO,CO,F],dims) ) == 0];
             
             if d_P ~= 1
-                constr = [constr, S_P - ( trRep(S_P,[AI,AO,BI,BO,CI,CO,F],dims) - trRep(S_P,[P,AI,AO,BI,BO,CI,CO,F],dims) ) == 0];
+                constr = [constr, S_P - ( tr_replace(S_P,[AI,AO,BI,BO,CI,CO,F],dims) - tr_replace(S_P,[P,AI,AO,BI,BO,CI,CO,F],dims) ) == 0];
             end
             
         case 4
@@ -442,80 +442,80 @@ function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
                                   T_PDABCF{i} >= 0, T_PDACBF{i} >= 0, T_PDBACF{i} >= 0, T_PDBCAF{i} >= 0, T_PDCABF{i} >= 0, T_PDCBAF{i} >= 0, ];
             end
             
-            S_PABCDF_proj = S_PABCDF - ( trRep(S_PABCDF,F,dims) - trRep(S_PABCDF,[DO,F],dims) );
-            S_PABCDF_proj = S_PABCDF_proj - ( trRep(S_PABCDF_proj,[DI,DO,F],dims) - trRep(S_PABCDF_proj,[CO,DI,DO,F],dims) );
-            S_PABDCF_proj = S_PABDCF - ( trRep(S_PABDCF,F,dims) - trRep(S_PABDCF,[CO,F],dims) );
-            S_PABDCF_proj = S_PABDCF_proj - ( trRep(S_PABDCF_proj,[CI,CO,F],dims) - trRep(S_PABDCF_proj,[CI,CO,DO,F],dims));
-            S_PACBDF_proj = S_PACBDF - ( trRep(S_PACBDF,F,dims) - trRep(S_PACBDF,[DO,F],dims) );
-            S_PACBDF_proj = S_PACBDF_proj - ( trRep(S_PACBDF_proj,[DI,DO,F],dims) - trRep(S_PACBDF_proj,[BO,DI,DO,F],dims) );
-            S_PACDBF_proj = S_PACDBF - ( trRep(S_PACDBF,F,dims) - trRep(S_PACDBF,[BO,F],dims) );
-            S_PACDBF_proj = S_PACDBF_proj - ( trRep(S_PACDBF_proj,[BI,BO,F],dims) - trRep(S_PACDBF_proj,[BI,BO,DO,F],dims) );
-            S_PADBCF_proj = S_PADBCF - ( trRep(S_PADBCF,F,dims) - trRep(S_PADBCF,[CO,F],dims) );
-            S_PADBCF_proj = S_PADBCF_proj - ( trRep(S_PADBCF_proj,[CI,CO,F],dims) - trRep(S_PADBCF_proj,[BO,CI,CO,F],dims) );
-            S_PADCBF_proj = S_PADCBF - ( trRep(S_PADCBF,F,dims) - trRep(S_PADCBF,[BO,F],dims) );
-            S_PADCBF_proj = S_PADCBF_proj - ( trRep(S_PADCBF_proj,[BI,BO,F],dims) - trRep(S_PADCBF_proj,[BI,BO,CO,F],dims) );
-            S_PBACDF_proj = S_PBACDF - ( trRep(S_PBACDF,F,dims) - trRep(S_PBACDF,[DO,F],dims) );
-            S_PBACDF_proj = S_PBACDF_proj - ( trRep(S_PBACDF_proj,[DI,DO,F],dims) - trRep(S_PBACDF_proj,[CO,DI,DO,F],dims) );
-            S_PBADCF_proj = S_PBADCF - ( trRep(S_PBADCF,F,dims) - trRep(S_PBADCF,[CO,F],dims) );
-            S_PBADCF_proj = S_PBADCF_proj - ( trRep(S_PBADCF_proj,[CI,CO,F],dims) - trRep(S_PBADCF_proj,[CI,CO,DO,F],dims) );
-            S_PBCADF_proj = S_PBCADF - ( trRep(S_PBCADF,F,dims) - trRep(S_PBCADF,[DO,F],dims) );
-            S_PBCADF_proj = S_PBCADF_proj - ( trRep(S_PBCADF_proj,[DI,DO,F],dims) - trRep(S_PBCADF_proj,[AO,DI,DO,F],dims) );
-            S_PBCDAF_proj = S_PBCDAF - ( trRep(S_PBCDAF,F,dims) - trRep(S_PBCDAF,[AO,F],dims) );
-            S_PBCDAF_proj = S_PBCDAF_proj - ( trRep(S_PBCDAF_proj,[AI,AO,F],dims) - trRep(S_PBCDAF_proj,[AI,AO,DO,F],dims) );
-            S_PBDACF_proj = S_PBDACF - ( trRep(S_PBDACF,F,dims) - trRep(S_PBDACF,[CO,F],dims) );
-            S_PBDACF_proj = S_PBDACF_proj - ( trRep(S_PBDACF_proj,[CI,CO,F],dims) - trRep(S_PBDACF_proj,[AO,CI,CO,F],dims) );
-            S_PBDCAF_proj = S_PBDCAF - ( trRep(S_PBDCAF,F,dims) - trRep(S_PBDCAF,[AO,F],dims) );
-            S_PBDCAF_proj = S_PBDCAF_proj - ( trRep(S_PBDCAF_proj,[AI,AO,F],dims) - trRep(S_PBDCAF_proj,[AI,AO,CO,F],dims) );
-            S_PCABDF_proj = S_PCABDF - ( trRep(S_PCABDF,F,dims) - trRep(S_PCABDF,[DO,F],dims) );
-            S_PCABDF_proj = S_PCABDF_proj - ( trRep(S_PCABDF_proj,[DI,DO,F],dims) - trRep(S_PCABDF_proj,[BO,DI,DO,F],dims) );
-            S_PCADBF_proj = S_PCADBF - ( trRep(S_PCADBF,F,dims) - trRep(S_PCADBF,[BO,F],dims) );
-            S_PCADBF_proj = S_PCADBF_proj - ( trRep(S_PCADBF_proj,[BI,BO,F],dims) - trRep(S_PCADBF_proj,[BI,BO,DO,F],dims) );
-            S_PCBADF_proj = S_PCBADF - ( trRep(S_PCBADF,F,dims) - trRep(S_PCBADF,[DO,F],dims) );
-            S_PCBADF_proj = S_PCBADF_proj - ( trRep(S_PCBADF_proj,[DI,DO,F],dims) - trRep(S_PCBADF_proj,[AO,DI,DO,F],dims) );
-            S_PCBDAF_proj = S_PCBDAF - ( trRep(S_PCBDAF,F,dims) - trRep(S_PCBDAF,[AO,F],dims) );
-            S_PCBDAF_proj = S_PCBDAF_proj - ( trRep(S_PCBDAF_proj,[AI,AO,F],dims) - trRep(S_PCBDAF_proj,[AI,AO,DO,F],dims) );
-            S_PCDABF_proj = S_PCDABF - ( trRep(S_PCDABF,F,dims) - trRep(S_PCDABF,[BO,F],dims) );
-            S_PCDABF_proj = S_PCDABF_proj - ( trRep(S_PCDABF_proj,[BI,BO,F],dims) - trRep(S_PCDABF_proj,[AO,BI,BO,F],dims) );
-            S_PCDBAF_proj = S_PCDBAF - ( trRep(S_PCDBAF,F,dims) - trRep(S_PCDBAF,[AO,F],dims) );
-            S_PCDBAF_proj = S_PCDBAF_proj - ( trRep(S_PCDBAF_proj,[AI,AO,F],dims) - trRep(S_PCDBAF_proj,[AI,AO,BO,F],dims) );
-            S_PDABCF_proj = S_PDABCF - ( trRep(S_PDABCF,F,dims) - trRep(S_PDABCF,[CO,F],dims) );
-            S_PDABCF_proj = S_PDABCF_proj - ( trRep(S_PDABCF_proj,[CI,CO,F],dims) - trRep(S_PDABCF_proj,[BO,CI,CO,F],dims) );
-            S_PDACBF_proj = S_PDACBF - ( trRep(S_PDACBF,F,dims) - trRep(S_PDACBF,[BO,F],dims) );
-            S_PDACBF_proj = S_PDACBF_proj - ( trRep(S_PDACBF_proj,[BI,BO,F],dims) - trRep(S_PDACBF_proj,[BI,BO,CO,F],dims) );
-            S_PDBACF_proj = S_PDBACF - ( trRep(S_PDBACF,F,dims) - trRep(S_PDBACF,[CO,F],dims) );
-            S_PDBACF_proj = S_PDBACF_proj - ( trRep(S_PDBACF_proj,[CI,CO,F],dims) - trRep(S_PDBACF_proj,[AO,CI,CO,F],dims) );
-            S_PDBCAF_proj = S_PDBCAF - ( trRep(S_PDBCAF,F,dims) - trRep(S_PDBCAF,[AO,F],dims) );
-            S_PDBCAF_proj = S_PDBCAF_proj - ( trRep(S_PDBCAF_proj,[AI,AO,F],dims) - trRep(S_PDBCAF_proj,[AI,AO,CO,F],dims) );
-            S_PDCABF_proj = S_PDCABF - ( trRep(S_PDCABF,F,dims) - trRep(S_PDCABF,[BO,F],dims) );
-            S_PDCABF_proj = S_PDCABF_proj - ( trRep(S_PDCABF_proj,[BI,BO,F],dims) - trRep(S_PDCABF_proj,[AO,BI,BO,F],dims) );
-            S_PDCBAF_proj = S_PDCBAF - ( trRep(S_PDCBAF,F,dims) - trRep(S_PDCBAF,[AO,F],dims) );
-            S_PDCBAF_proj = S_PDCBAF_proj - ( trRep(S_PDCBAF_proj,[AI,AO,F],dims) - trRep(S_PDCBAF_proj,[AI,AO,BO,F],dims) );
+            S_PABCDF_proj = S_PABCDF - ( tr_replace(S_PABCDF,F,dims) - tr_replace(S_PABCDF,[DO,F],dims) );
+            S_PABCDF_proj = S_PABCDF_proj - ( tr_replace(S_PABCDF_proj,[DI,DO,F],dims) - tr_replace(S_PABCDF_proj,[CO,DI,DO,F],dims) );
+            S_PABDCF_proj = S_PABDCF - ( tr_replace(S_PABDCF,F,dims) - tr_replace(S_PABDCF,[CO,F],dims) );
+            S_PABDCF_proj = S_PABDCF_proj - ( tr_replace(S_PABDCF_proj,[CI,CO,F],dims) - tr_replace(S_PABDCF_proj,[CI,CO,DO,F],dims));
+            S_PACBDF_proj = S_PACBDF - ( tr_replace(S_PACBDF,F,dims) - tr_replace(S_PACBDF,[DO,F],dims) );
+            S_PACBDF_proj = S_PACBDF_proj - ( tr_replace(S_PACBDF_proj,[DI,DO,F],dims) - tr_replace(S_PACBDF_proj,[BO,DI,DO,F],dims) );
+            S_PACDBF_proj = S_PACDBF - ( tr_replace(S_PACDBF,F,dims) - tr_replace(S_PACDBF,[BO,F],dims) );
+            S_PACDBF_proj = S_PACDBF_proj - ( tr_replace(S_PACDBF_proj,[BI,BO,F],dims) - tr_replace(S_PACDBF_proj,[BI,BO,DO,F],dims) );
+            S_PADBCF_proj = S_PADBCF - ( tr_replace(S_PADBCF,F,dims) - tr_replace(S_PADBCF,[CO,F],dims) );
+            S_PADBCF_proj = S_PADBCF_proj - ( tr_replace(S_PADBCF_proj,[CI,CO,F],dims) - tr_replace(S_PADBCF_proj,[BO,CI,CO,F],dims) );
+            S_PADCBF_proj = S_PADCBF - ( tr_replace(S_PADCBF,F,dims) - tr_replace(S_PADCBF,[BO,F],dims) );
+            S_PADCBF_proj = S_PADCBF_proj - ( tr_replace(S_PADCBF_proj,[BI,BO,F],dims) - tr_replace(S_PADCBF_proj,[BI,BO,CO,F],dims) );
+            S_PBACDF_proj = S_PBACDF - ( tr_replace(S_PBACDF,F,dims) - tr_replace(S_PBACDF,[DO,F],dims) );
+            S_PBACDF_proj = S_PBACDF_proj - ( tr_replace(S_PBACDF_proj,[DI,DO,F],dims) - tr_replace(S_PBACDF_proj,[CO,DI,DO,F],dims) );
+            S_PBADCF_proj = S_PBADCF - ( tr_replace(S_PBADCF,F,dims) - tr_replace(S_PBADCF,[CO,F],dims) );
+            S_PBADCF_proj = S_PBADCF_proj - ( tr_replace(S_PBADCF_proj,[CI,CO,F],dims) - tr_replace(S_PBADCF_proj,[CI,CO,DO,F],dims) );
+            S_PBCADF_proj = S_PBCADF - ( tr_replace(S_PBCADF,F,dims) - tr_replace(S_PBCADF,[DO,F],dims) );
+            S_PBCADF_proj = S_PBCADF_proj - ( tr_replace(S_PBCADF_proj,[DI,DO,F],dims) - tr_replace(S_PBCADF_proj,[AO,DI,DO,F],dims) );
+            S_PBCDAF_proj = S_PBCDAF - ( tr_replace(S_PBCDAF,F,dims) - tr_replace(S_PBCDAF,[AO,F],dims) );
+            S_PBCDAF_proj = S_PBCDAF_proj - ( tr_replace(S_PBCDAF_proj,[AI,AO,F],dims) - tr_replace(S_PBCDAF_proj,[AI,AO,DO,F],dims) );
+            S_PBDACF_proj = S_PBDACF - ( tr_replace(S_PBDACF,F,dims) - tr_replace(S_PBDACF,[CO,F],dims) );
+            S_PBDACF_proj = S_PBDACF_proj - ( tr_replace(S_PBDACF_proj,[CI,CO,F],dims) - tr_replace(S_PBDACF_proj,[AO,CI,CO,F],dims) );
+            S_PBDCAF_proj = S_PBDCAF - ( tr_replace(S_PBDCAF,F,dims) - tr_replace(S_PBDCAF,[AO,F],dims) );
+            S_PBDCAF_proj = S_PBDCAF_proj - ( tr_replace(S_PBDCAF_proj,[AI,AO,F],dims) - tr_replace(S_PBDCAF_proj,[AI,AO,CO,F],dims) );
+            S_PCABDF_proj = S_PCABDF - ( tr_replace(S_PCABDF,F,dims) - tr_replace(S_PCABDF,[DO,F],dims) );
+            S_PCABDF_proj = S_PCABDF_proj - ( tr_replace(S_PCABDF_proj,[DI,DO,F],dims) - tr_replace(S_PCABDF_proj,[BO,DI,DO,F],dims) );
+            S_PCADBF_proj = S_PCADBF - ( tr_replace(S_PCADBF,F,dims) - tr_replace(S_PCADBF,[BO,F],dims) );
+            S_PCADBF_proj = S_PCADBF_proj - ( tr_replace(S_PCADBF_proj,[BI,BO,F],dims) - tr_replace(S_PCADBF_proj,[BI,BO,DO,F],dims) );
+            S_PCBADF_proj = S_PCBADF - ( tr_replace(S_PCBADF,F,dims) - tr_replace(S_PCBADF,[DO,F],dims) );
+            S_PCBADF_proj = S_PCBADF_proj - ( tr_replace(S_PCBADF_proj,[DI,DO,F],dims) - tr_replace(S_PCBADF_proj,[AO,DI,DO,F],dims) );
+            S_PCBDAF_proj = S_PCBDAF - ( tr_replace(S_PCBDAF,F,dims) - tr_replace(S_PCBDAF,[AO,F],dims) );
+            S_PCBDAF_proj = S_PCBDAF_proj - ( tr_replace(S_PCBDAF_proj,[AI,AO,F],dims) - tr_replace(S_PCBDAF_proj,[AI,AO,DO,F],dims) );
+            S_PCDABF_proj = S_PCDABF - ( tr_replace(S_PCDABF,F,dims) - tr_replace(S_PCDABF,[BO,F],dims) );
+            S_PCDABF_proj = S_PCDABF_proj - ( tr_replace(S_PCDABF_proj,[BI,BO,F],dims) - tr_replace(S_PCDABF_proj,[AO,BI,BO,F],dims) );
+            S_PCDBAF_proj = S_PCDBAF - ( tr_replace(S_PCDBAF,F,dims) - tr_replace(S_PCDBAF,[AO,F],dims) );
+            S_PCDBAF_proj = S_PCDBAF_proj - ( tr_replace(S_PCDBAF_proj,[AI,AO,F],dims) - tr_replace(S_PCDBAF_proj,[AI,AO,BO,F],dims) );
+            S_PDABCF_proj = S_PDABCF - ( tr_replace(S_PDABCF,F,dims) - tr_replace(S_PDABCF,[CO,F],dims) );
+            S_PDABCF_proj = S_PDABCF_proj - ( tr_replace(S_PDABCF_proj,[CI,CO,F],dims) - tr_replace(S_PDABCF_proj,[BO,CI,CO,F],dims) );
+            S_PDACBF_proj = S_PDACBF - ( tr_replace(S_PDACBF,F,dims) - tr_replace(S_PDACBF,[BO,F],dims) );
+            S_PDACBF_proj = S_PDACBF_proj - ( tr_replace(S_PDACBF_proj,[BI,BO,F],dims) - tr_replace(S_PDACBF_proj,[BI,BO,CO,F],dims) );
+            S_PDBACF_proj = S_PDBACF - ( tr_replace(S_PDBACF,F,dims) - tr_replace(S_PDBACF,[CO,F],dims) );
+            S_PDBACF_proj = S_PDBACF_proj - ( tr_replace(S_PDBACF_proj,[CI,CO,F],dims) - tr_replace(S_PDBACF_proj,[AO,CI,CO,F],dims) );
+            S_PDBCAF_proj = S_PDBCAF - ( tr_replace(S_PDBCAF,F,dims) - tr_replace(S_PDBCAF,[AO,F],dims) );
+            S_PDBCAF_proj = S_PDBCAF_proj - ( tr_replace(S_PDBCAF_proj,[AI,AO,F],dims) - tr_replace(S_PDBCAF_proj,[AI,AO,CO,F],dims) );
+            S_PDCABF_proj = S_PDCABF - ( tr_replace(S_PDCABF,F,dims) - tr_replace(S_PDCABF,[BO,F],dims) );
+            S_PDCABF_proj = S_PDCABF_proj - ( tr_replace(S_PDCABF_proj,[BI,BO,F],dims) - tr_replace(S_PDCABF_proj,[AO,BI,BO,F],dims) );
+            S_PDCBAF_proj = S_PDCBAF - ( tr_replace(S_PDCBAF,F,dims) - tr_replace(S_PDCBAF,[AO,F],dims) );
+            S_PDCBAF_proj = S_PDCBAF_proj - ( tr_replace(S_PDCBAF_proj,[AI,AO,F],dims) - tr_replace(S_PDCBAF_proj,[AI,AO,BO,F],dims) );
             
             constr = [constr, S_PABCDF_proj == 0, S_PABDCF_proj == 0, S_PACBDF_proj == 0, S_PACDBF_proj == 0, S_PADBCF_proj == 0, S_PADCBF_proj == 0, ...
                               S_PBACDF_proj == 0, S_PBADCF_proj == 0, S_PBCADF_proj == 0, S_PBCDAF_proj == 0, S_PBDACF_proj == 0, S_PBDCAF_proj == 0, ...
                               S_PCABDF_proj == 0, S_PCADBF_proj == 0, S_PCBADF_proj == 0, S_PCBDAF_proj == 0, S_PCDABF_proj == 0, S_PCDBAF_proj == 0, ...
                               S_PDABCF_proj == 0, S_PDACBF_proj == 0, S_PDBACF_proj == 0, S_PDBCAF_proj == 0, S_PDCABF_proj == 0, S_PDCBAF_proj == 0];
             
-            constr = [constr, S_PAB - ( trRep(S_PAB,[CI,CO,DI,DO,F],dims) - trRep(S_PAB,[BO,CI,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PAC - ( trRep(S_PAC,[BI,BO,DI,DO,F],dims) - trRep(S_PAC,[BI,BO,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PAD - ( trRep(S_PAD,[BI,BO,CI,CO,F],dims) - trRep(S_PAD,[BI,BO,CI,CO,DO,F],dims) ) == 0];
-            constr = [constr, S_PBA - ( trRep(S_PBA,[CI,CO,DI,DO,F],dims) - trRep(S_PBA,[AO,CI,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PBC - ( trRep(S_PBC,[AI,AO,DI,DO,F],dims) - trRep(S_PBC,[AI,AO,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PBD - ( trRep(S_PBD,[AI,AO,CI,CO,F],dims) - trRep(S_PBD,[AI,AO,CI,CO,DO,F],dims) ) == 0];
-            constr = [constr, S_PCA - ( trRep(S_PCA,[BI,BO,DI,DO,F],dims) - trRep(S_PCA,[AO,BI,BO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PCB - ( trRep(S_PCB,[AI,AO,DI,DO,F],dims) - trRep(S_PCB,[AI,AO,BO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PCD - ( trRep(S_PCD,[AI,AO,BI,BO,F],dims) - trRep(S_PCD,[AI,AO,BI,BO,DO,F],dims) ) == 0];
-            constr = [constr, S_PDA - ( trRep(S_PDA,[BI,BO,CI,CO,F],dims) - trRep(S_PDA,[AO,BI,BO,CI,CO,F],dims) ) == 0];
-            constr = [constr, S_PDB - ( trRep(S_PDB,[AI,AO,CI,CO,F],dims) - trRep(S_PDB,[AI,AO,BO,CI,CO,F],dims) ) == 0];
-            constr = [constr, S_PDC - ( trRep(S_PDC,[AI,AO,BI,BO,F],dims) - trRep(S_PDC,[AI,AO,BI,BO,CO,F],dims) ) == 0];
+            constr = [constr, S_PAB - ( tr_replace(S_PAB,[CI,CO,DI,DO,F],dims) - tr_replace(S_PAB,[BO,CI,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PAC - ( tr_replace(S_PAC,[BI,BO,DI,DO,F],dims) - tr_replace(S_PAC,[BI,BO,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PAD - ( tr_replace(S_PAD,[BI,BO,CI,CO,F],dims) - tr_replace(S_PAD,[BI,BO,CI,CO,DO,F],dims) ) == 0];
+            constr = [constr, S_PBA - ( tr_replace(S_PBA,[CI,CO,DI,DO,F],dims) - tr_replace(S_PBA,[AO,CI,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PBC - ( tr_replace(S_PBC,[AI,AO,DI,DO,F],dims) - tr_replace(S_PBC,[AI,AO,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PBD - ( tr_replace(S_PBD,[AI,AO,CI,CO,F],dims) - tr_replace(S_PBD,[AI,AO,CI,CO,DO,F],dims) ) == 0];
+            constr = [constr, S_PCA - ( tr_replace(S_PCA,[BI,BO,DI,DO,F],dims) - tr_replace(S_PCA,[AO,BI,BO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PCB - ( tr_replace(S_PCB,[AI,AO,DI,DO,F],dims) - tr_replace(S_PCB,[AI,AO,BO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PCD - ( tr_replace(S_PCD,[AI,AO,BI,BO,F],dims) - tr_replace(S_PCD,[AI,AO,BI,BO,DO,F],dims) ) == 0];
+            constr = [constr, S_PDA - ( tr_replace(S_PDA,[BI,BO,CI,CO,F],dims) - tr_replace(S_PDA,[AO,BI,BO,CI,CO,F],dims) ) == 0];
+            constr = [constr, S_PDB - ( tr_replace(S_PDB,[AI,AO,CI,CO,F],dims) - tr_replace(S_PDB,[AI,AO,BO,CI,CO,F],dims) ) == 0];
+            constr = [constr, S_PDC - ( tr_replace(S_PDC,[AI,AO,BI,BO,F],dims) - tr_replace(S_PDC,[AI,AO,BI,BO,CO,F],dims) ) == 0];
             
-            constr = [constr, S_PA - ( trRep(S_PA,[BI,BO,CI,CO,DI,DO,F],dims) - trRep(S_PA,[AO,BI,BO,CI,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PB - ( trRep(S_PB,[AI,AO,CI,CO,DI,DO,F],dims) - trRep(S_PB,[AI,AO,BO,CI,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PC - ( trRep(S_PC,[AI,AO,BI,BO,DI,DO,F],dims) - trRep(S_PC,[AI,AO,BI,BO,CO,DI,DO,F],dims) ) == 0];
-            constr = [constr, S_PD - ( trRep(S_PD,[AI,AO,BI,BO,CI,CO,F],dims) - trRep(S_PD,[AI,AO,BI,BO,CI,CO,DO,F],dims) ) == 0];
+            constr = [constr, S_PA - ( tr_replace(S_PA,[BI,BO,CI,CO,DI,DO,F],dims) - tr_replace(S_PA,[AO,BI,BO,CI,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PB - ( tr_replace(S_PB,[AI,AO,CI,CO,DI,DO,F],dims) - tr_replace(S_PB,[AI,AO,BO,CI,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PC - ( tr_replace(S_PC,[AI,AO,BI,BO,DI,DO,F],dims) - tr_replace(S_PC,[AI,AO,BI,BO,CO,DI,DO,F],dims) ) == 0];
+            constr = [constr, S_PD - ( tr_replace(S_PD,[AI,AO,BI,BO,CI,CO,F],dims) - tr_replace(S_PD,[AI,AO,BI,BO,CI,CO,DO,F],dims) ) == 0];
             
             if d_P ~= 1
-                constr = [constr, S_P - ( trRep(S_P,[AI,AO,BI,BO,CI,CO,DI,DO,F],dims) - trRep(S_P,[P,AI,AO,BI,BO,CI,CO,DI,DO,F],dims) ) == 0];
+                constr = [constr, S_P - ( tr_replace(S_P,[AI,AO,BI,BO,CI,CO,DI,DO,F],dims) - tr_replace(S_P,[P,AI,AO,BI,BO,CI,CO,DI,DO,F],dims) ) == 0];
             end
             
         otherwise

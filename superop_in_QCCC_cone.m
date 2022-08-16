@@ -42,7 +42,7 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                 W_AF = W_AF + Wr{i};
             end
             W_A = 1/d_AO*PartialTrace(W_AF,[AO,F],dims);
-            constr = [constr, PartialTrace(W_AF,F,dims) == tensorID(W_A,d_AO)];
+            constr = [constr, PartialTrace(W_AF,F,dims) == tensor_id(W_A,d_AO)];
             if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
                 % We only want it to be proportional to the identity, since we are only checking the cone
                 constr = [constr, PartialTrace(W_A,2,dims([P,AI])) == trace(W_A)/d_P*eye(d_P)];
@@ -78,10 +78,10 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             W_A = 1/d_AO*PartialTrace(W_AB,[AO,BI],dims(P:BI));
             W_B = 1/d_BO*PartialTrace(W_BA,[2,4],dims([P,AI,BI,BO]));
             
-            constr = [constr, PartialTrace(W_ABF,F,dims) == tensorID(W_AB,d_BO)];
-            constr = [constr, PartialTrace(W_BAF,F,dims) == PermuteSystems(tensorID(W_BA,d_AO),[P,AI,BI,BO,AO],dims([P,AI,BI,BO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_AB,BI,dims(P:BI)) == tensorID(W_A,d_AO)];
-            constr = [constr, PartialTrace(W_BA,AI,dims([P,AI,BI,BO])) == tensorID(W_B,d_BO)];
+            constr = [constr, PartialTrace(W_ABF,F,dims) == tensor_id(W_AB,d_BO)];
+            constr = [constr, PartialTrace(W_BAF,F,dims) == PermuteSystems(tensor_id(W_BA,d_AO),[P,AI,BI,BO,AO],dims([P,AI,BI,BO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_AB,BI,dims(P:BI)) == tensor_id(W_A,d_AO)];
+            constr = [constr, PartialTrace(W_BA,AI,dims([P,AI,BI,BO])) == tensor_id(W_B,d_BO)];
             if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
                 % Careful! We don't have equality with the identity, but rather proportional to identity
                 % since we're just looking at the unnormalised cone. Really its the "(1-P)" trace and replace condition.
@@ -149,23 +149,23 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             W_B = 1/d_BO*( PartialTrace(W_BA,[2,4],dims([P,AI,BI,BO])) + PartialTrace(W_BC,[3,4],dims([P,BI,BO,CI])) );
             W_C = 1/d_CO*( PartialTrace(W_CA,[2,4],dims([P,AI,CI,CO])) + PartialTrace(W_CB,[2,4],dims([P,BI,CI,CO])) );
             
-            constr = [constr, PartialTrace(W_ABCF,F,dims) == tensorID(W_ABC,d_CO)];
-            constr = [constr, PartialTrace(W_ACBF,F,dims) == PermuteSystems(tensorID(W_ACB,d_BO),[P,AI,AO,BI,CI,CO,BO],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_BACF,F,dims) == tensorID(W_BAC,d_CO)];
-            constr = [constr, PartialTrace(W_BCAF,F,dims) == PermuteSystems(tensorID(W_BCA,d_AO),[P,AI,BI,BO,CI,CO,AO],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CABF,F,dims) == PermuteSystems(tensorID(W_CAB,d_BO),[P,AI,AO,BI,CI,CO,BO],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_CBAF,F,dims) == PermuteSystems(tensorID(W_CBA,d_AO),[P,AI,BI,BO,CI,CO,AO],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_ABCF,F,dims) == tensor_id(W_ABC,d_CO)];
+            constr = [constr, PartialTrace(W_ACBF,F,dims) == PermuteSystems(tensor_id(W_ACB,d_BO),[P,AI,AO,BI,CI,CO,BO],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_BACF,F,dims) == tensor_id(W_BAC,d_CO)];
+            constr = [constr, PartialTrace(W_BCAF,F,dims) == PermuteSystems(tensor_id(W_BCA,d_AO),[P,AI,BI,BO,CI,CO,AO],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CABF,F,dims) == PermuteSystems(tensor_id(W_CAB,d_BO),[P,AI,AO,BI,CI,CO,BO],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CBAF,F,dims) == PermuteSystems(tensor_id(W_CBA,d_AO),[P,AI,BI,BO,CI,CO,AO],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
             
-            constr = [constr, PartialTrace(W_ABC,6,dims([P,AI,AO,BI,BO,CI])) == tensorID(W_AB,d_BO)];
-            constr = [constr, PartialTrace(W_ACB,4,dims([P,AI,AO,BI,CI,CO])) == tensorID(W_AC,d_CO)];
-            constr = [constr, PartialTrace(W_BAC,6,dims([P,AI,AO,BI,BO,CI])) == PermuteSystems(tensorID(W_BA,d_AO),[1,2,4,5,3],dims([P,AI,BI,BO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_BCA,2,dims([P,AI,BI,BO,CI,CO])) == tensorID(W_BC,d_CO)];
-            constr = [constr, PartialTrace(W_CAB,4,dims([P,AI,AO,BI,CI,CO])) == PermuteSystems(tensorID(W_CA,d_AO),[1,2,4,5,3],dims([P,AI,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) == PermuteSystems(tensorID(W_CB,d_BO),[1,2,4,5,3],dims([P,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_ABC,6,dims([P,AI,AO,BI,BO,CI])) == tensor_id(W_AB,d_BO)];
+            constr = [constr, PartialTrace(W_ACB,4,dims([P,AI,AO,BI,CI,CO])) == tensor_id(W_AC,d_CO)];
+            constr = [constr, PartialTrace(W_BAC,6,dims([P,AI,AO,BI,BO,CI])) == PermuteSystems(tensor_id(W_BA,d_AO),[1,2,4,5,3],dims([P,AI,BI,BO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_BCA,2,dims([P,AI,BI,BO,CI,CO])) == tensor_id(W_BC,d_CO)];
+            constr = [constr, PartialTrace(W_CAB,4,dims([P,AI,AO,BI,CI,CO])) == PermuteSystems(tensor_id(W_CA,d_AO),[1,2,4,5,3],dims([P,AI,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) == PermuteSystems(tensor_id(W_CB,d_BO),[1,2,4,5,3],dims([P,BI,CI,CO,BO]),0,1)];
             
-            constr = [constr, PartialTrace(W_AB,4,dims([P,AI,AO,BI])) + PartialTrace(W_AC,4,dims([P,AI,AO,CI])) == tensorID(W_A,d_AO)];
-            constr = [constr, PartialTrace(W_BA,2,dims([P,AI,BI,BO])) + PartialTrace(W_BC,4,dims([P,BI,BO,CI])) == tensorID(W_B,d_BO)];
-            constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) == tensorID(W_C,d_CO)];
+            constr = [constr, PartialTrace(W_AB,4,dims([P,AI,AO,BI])) + PartialTrace(W_AC,4,dims([P,AI,AO,CI])) == tensor_id(W_A,d_AO)];
+            constr = [constr, PartialTrace(W_BA,2,dims([P,AI,BI,BO])) + PartialTrace(W_BC,4,dims([P,BI,BO,CI])) == tensor_id(W_B,d_BO)];
+            constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) == tensor_id(W_C,d_CO)];
             
             if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
                 constr = [constr, PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) == trace(W_A+W_B+W_C)/d_P*eye(d_P)];
@@ -364,73 +364,73 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             W_C = 1/d_CO*( PartialTrace(W_CA,[2,4],dims([P,AI,CI,CO])) + PartialTrace(W_CB,[2,4],dims([P,BI,CI,CO])) + PartialTrace(W_CD,[3,4],dims([P,CI,CO,DI])) );
             W_D = 1/d_DO*( PartialTrace(W_DA,[2,4],dims([P,AI,DI,DO])) + PartialTrace(W_DB,[2,4],dims([P,BI,DI,DO])) + PartialTrace(W_DC,[2,4],dims([P,CI,DI,DO])) );
             
-            constr = [constr, PartialTrace(W_ABCDF,F,dims) == tensorID(W_ABCD,d_DO)];
-            constr = [constr, PartialTrace(W_ABDCF,F,dims) == PermuteSystems(tensorID(W_ABDC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_ACBDF,F,dims) == tensorID(W_ACBD,d_DO)];
-            constr = [constr, PartialTrace(W_ACDBF,F,dims) == PermuteSystems(tensorID(W_ACDB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_ADBCF,F,dims) == PermuteSystems(tensorID(W_ADBC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_ADCBF,F,dims) == PermuteSystems(tensorID(W_ADCB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_BACDF,F,dims) == tensorID(W_BACD,d_DO)];
-            constr = [constr, PartialTrace(W_BADCF,F,dims) == PermuteSystems(tensorID(W_BADC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_BCADF,F,dims) == tensorID(W_BCAD,d_DO)];
-            constr = [constr, PartialTrace(W_BCDAF,F,dims) == PermuteSystems(tensorID(W_BCDA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_BDACF,F,dims) == PermuteSystems(tensorID(W_BDAC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_BDCAF,F,dims) == PermuteSystems(tensorID(W_BDCA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CABDF,F,dims) == tensorID(W_CABD,d_DO)];
-            constr = [constr, PartialTrace(W_CADBF,F,dims) == PermuteSystems(tensorID(W_CADB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_CBADF,F,dims) == tensorID(W_CBAD,d_DO)];
-            constr = [constr, PartialTrace(W_CBDAF,F,dims) == PermuteSystems(tensorID(W_CBDA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CDABF,F,dims) == PermuteSystems(tensorID(W_CDAB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_CDBAF,F,dims) == PermuteSystems(tensorID(W_CDBA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_DABCF,F,dims) == PermuteSystems(tensorID(W_DABC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_DACBF,F,dims) == PermuteSystems(tensorID(W_DACB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_DBACF,F,dims) == PermuteSystems(tensorID(W_DBAC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_DBCAF,F,dims) == PermuteSystems(tensorID(W_DBCA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_DCABF,F,dims) == PermuteSystems(tensorID(W_DCAB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_DCBAF,F,dims) == PermuteSystems(tensorID(W_DCBA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_ABCDF,F,dims) == tensor_id(W_ABCD,d_DO)];
+            constr = [constr, PartialTrace(W_ABDCF,F,dims) == PermuteSystems(tensor_id(W_ABDC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_ACBDF,F,dims) == tensor_id(W_ACBD,d_DO)];
+            constr = [constr, PartialTrace(W_ACDBF,F,dims) == PermuteSystems(tensor_id(W_ACDB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_ADBCF,F,dims) == PermuteSystems(tensor_id(W_ADBC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_ADCBF,F,dims) == PermuteSystems(tensor_id(W_ADCB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_BACDF,F,dims) == tensor_id(W_BACD,d_DO)];
+            constr = [constr, PartialTrace(W_BADCF,F,dims) == PermuteSystems(tensor_id(W_BADC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_BCADF,F,dims) == tensor_id(W_BCAD,d_DO)];
+            constr = [constr, PartialTrace(W_BCDAF,F,dims) == PermuteSystems(tensor_id(W_BCDA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_BDACF,F,dims) == PermuteSystems(tensor_id(W_BDAC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_BDCAF,F,dims) == PermuteSystems(tensor_id(W_BDCA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CABDF,F,dims) == tensor_id(W_CABD,d_DO)];
+            constr = [constr, PartialTrace(W_CADBF,F,dims) == PermuteSystems(tensor_id(W_CADB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CBADF,F,dims) == tensor_id(W_CBAD,d_DO)];
+            constr = [constr, PartialTrace(W_CBDAF,F,dims) == PermuteSystems(tensor_id(W_CBDA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CDABF,F,dims) == PermuteSystems(tensor_id(W_CDAB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CDBAF,F,dims) == PermuteSystems(tensor_id(W_CDBA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_DABCF,F,dims) == PermuteSystems(tensor_id(W_DABC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_DACBF,F,dims) == PermuteSystems(tensor_id(W_DACB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_DBACF,F,dims) == PermuteSystems(tensor_id(W_DBAC,d_CO),[P,AI,AO,BI,BO,CI,DI,DO,CO],dims([P,AI,AO,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_DBCAF,F,dims) == PermuteSystems(tensor_id(W_DBCA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_DCABF,F,dims) == PermuteSystems(tensor_id(W_DCAB,d_BO),[P,AI,AO,BI,CI,CO,DI,DO,BO],dims([P,AI,AO,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_DCBAF,F,dims) == PermuteSystems(tensor_id(W_DCBA,d_AO),[P,AI,BI,BO,CI,CO,DI,DO,AO],dims([P,AI,BI,BO,CI,CO,DI,DO,AO]),0,1)];
             
-            constr = [constr, PartialTrace(W_ABCD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == tensorID(W_ABC,d_CO)];
-            constr = [constr, PartialTrace(W_ABDC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == tensorID(W_ABD,d_DO)];
-            constr = [constr, PartialTrace(W_ACBD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensorID(W_ACB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_ACDB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == tensorID(W_ACD,d_DO)];
-            constr = [constr, PartialTrace(W_ADBC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensorID(W_ADB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_ADCB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_ADC,d_CO),[1,2,3,4,6,7,5],dims([P,AI,AO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_BACD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == tensorID(W_BAC,d_CO)];
-            constr = [constr, PartialTrace(W_BADC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == tensorID(W_BAD,d_DO)];
-            constr = [constr, PartialTrace(W_BCAD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensorID(W_BCA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_BCDA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == tensorID(W_BCD,d_DO)];
-            constr = [constr, PartialTrace(W_BDAC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensorID(W_BDA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_BDCA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_BDC,d_CO),[1,2,3,4,6,7,5],dims([P,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_CABD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensorID(W_CAB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_CADB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == tensorID(W_CAD,d_DO)];
-            constr = [constr, PartialTrace(W_CBAD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensorID(W_CBA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CBDA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == tensorID(W_CBD,d_DO)];
-            constr = [constr, PartialTrace(W_CDAB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_CDA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CDBA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_CDB,d_BO),[1,2,4,5,6,7,3],dims([P,BI,CI,CO,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_DABC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensorID(W_DAB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_DACB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_DAC,d_CO),[1,2,3,4,6,7,5],dims([P,AI,AO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_DBAC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensorID(W_DBA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_DBCA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_DBC,d_CO),[1,2,3,4,6,7,5],dims([P,BI,BO,CI,DI,DO,CO]),0,1)];
-            constr = [constr, PartialTrace(W_DCAB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_DCA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,CI,CO,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_DCBA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_DCB,d_BO),[1,2,4,5,6,7,3],dims([P,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_ABCD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == tensor_id(W_ABC,d_CO)];
+            constr = [constr, PartialTrace(W_ABDC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == tensor_id(W_ABD,d_DO)];
+            constr = [constr, PartialTrace(W_ACBD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_ACB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_ACDB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == tensor_id(W_ACD,d_DO)];
+            constr = [constr, PartialTrace(W_ADBC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_ADB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_ADCB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_ADC,d_CO),[1,2,3,4,6,7,5],dims([P,AI,AO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_BACD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == tensor_id(W_BAC,d_CO)];
+            constr = [constr, PartialTrace(W_BADC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == tensor_id(W_BAD,d_DO)];
+            constr = [constr, PartialTrace(W_BCAD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_BCA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_BCDA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == tensor_id(W_BCD,d_DO)];
+            constr = [constr, PartialTrace(W_BDAC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_BDA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_BDCA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_BDC,d_CO),[1,2,3,4,6,7,5],dims([P,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_CABD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CAB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CADB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == tensor_id(W_CAD,d_DO)];
+            constr = [constr, PartialTrace(W_CBAD,8,dims([P,AI,AO,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CBA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CBDA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == tensor_id(W_CBD,d_DO)];
+            constr = [constr, PartialTrace(W_CDAB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_CDA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CDBA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_CDB,d_BO),[1,2,4,5,6,7,3],dims([P,BI,CI,CO,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_DABC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DAB,d_BO),[1,2,3,4,6,7,5],dims([P,AI,AO,BI,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_DACB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_DAC,d_CO),[1,2,3,4,6,7,5],dims([P,AI,AO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_DBAC,6,dims([P,AI,AO,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DBA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,BI,BO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_DBCA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_DBC,d_CO),[1,2,3,4,6,7,5],dims([P,BI,BO,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_DCAB,4,dims([P,AI,AO,BI,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_DCA,d_AO),[1,2,4,5,6,7,3],dims([P,AI,CI,CO,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_DCBA,2,dims([P,AI,BI,BO,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_DCB,d_BO),[1,2,4,5,6,7,3],dims([P,BI,CI,CO,DI,DO,BO]),0,1)];
             
-            constr = [constr, PartialTrace(W_ABC,6,dims([P,AI,AO,BI,BO,CI])) + PartialTrace(W_ABD,6,dims([P,AI,AO,BI,BO,DI])) == tensorID(W_AB,d_BO)];
-            constr = [constr, PartialTrace(W_ACB,4,dims([P,AI,AO,BI,CI,CO])) + PartialTrace(W_ACD,6,dims([P,AI,AO,CI,CO,DI])) == tensorID(W_AC,d_CO)];
-            constr = [constr, PartialTrace(W_ADB,4,dims([P,AI,AO,BI,DI,DO])) + PartialTrace(W_ADC,4,dims([P,AI,AO,CI,DI,DO])) == tensorID(W_AD,d_DO)];
-            constr = [constr, PartialTrace(W_BAC,6,dims([P,AI,AO,BI,BO,CI])) + PartialTrace(W_BAD,6,dims([P,AI,AO,BI,BO,DI])) == PermuteSystems(tensorID(W_BA,d_AO),[1,2,4,5,3],dims([P,AI,BI,BO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_BCA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_BCD,6,dims([P,BI,BO,CI,CO,DI])) == tensorID(W_BC,d_CO)];
-            constr = [constr, PartialTrace(W_BDA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_BDC,4,dims([P,BI,BO,CI,DI,DO])) == tensorID(W_BD,d_DO)];
-            constr = [constr, PartialTrace(W_CAB,4,dims([P,AI,AO,BI,CI,CO])) + PartialTrace(W_CAD,6,dims([P,AI,AO,CI,CO,DI])) == PermuteSystems(tensorID(W_CA,d_AO),[1,2,4,5,3],dims([P,AI,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_CBD,6,dims([P,BI,BO,CI,CO,DI])) == PermuteSystems(tensorID(W_CB,d_BO),[1,2,4,5,3],d([P,BI,CI,CO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_CDA,2,dims([P,AI,CI,CO,DI,DO])) + PartialTrace(W_CDB,2,dims([P,BI,CI,CO,DI,DO])) == tensorID(W_CD,d_DO)];
-            constr = [constr, PartialTrace(W_DAB,4,dims([P,AI,AO,BI,DI,DO])) + PartialTrace(W_DAC,4,dims([P,AI,AO,CI,DI,DO])) == PermuteSystems(tensorID(W_DA,d_AO),[1,2,4,5,3],dims([P,AI,DI,DO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_DBA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_DBC,4,dims([P,BI,BO,CI,DI,DO])) == PermuteSystems(tensorID(W_DB,d_BO),[1,2,4,5,3],dims([P,BI,DI,DO,BO]),0,1)];
-            constr = [constr, PartialTrace(W_DCA,2,dims([P,AI,CI,CO,DI,DO])) + PartialTrace(W_DCB,2,dims([P,BI,CI,CO,DI,DO])) == PermuteSystems(tensorID(W_DC,d_CO),[1,2,4,5,3],dims([P,CI,DI,DO,CO]),0,1)];
+            constr = [constr, PartialTrace(W_ABC,6,dims([P,AI,AO,BI,BO,CI])) + PartialTrace(W_ABD,6,dims([P,AI,AO,BI,BO,DI])) == tensor_id(W_AB,d_BO)];
+            constr = [constr, PartialTrace(W_ACB,4,dims([P,AI,AO,BI,CI,CO])) + PartialTrace(W_ACD,6,dims([P,AI,AO,CI,CO,DI])) == tensor_id(W_AC,d_CO)];
+            constr = [constr, PartialTrace(W_ADB,4,dims([P,AI,AO,BI,DI,DO])) + PartialTrace(W_ADC,4,dims([P,AI,AO,CI,DI,DO])) == tensor_id(W_AD,d_DO)];
+            constr = [constr, PartialTrace(W_BAC,6,dims([P,AI,AO,BI,BO,CI])) + PartialTrace(W_BAD,6,dims([P,AI,AO,BI,BO,DI])) == PermuteSystems(tensor_id(W_BA,d_AO),[1,2,4,5,3],dims([P,AI,BI,BO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_BCA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_BCD,6,dims([P,BI,BO,CI,CO,DI])) == tensor_id(W_BC,d_CO)];
+            constr = [constr, PartialTrace(W_BDA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_BDC,4,dims([P,BI,BO,CI,DI,DO])) == tensor_id(W_BD,d_DO)];
+            constr = [constr, PartialTrace(W_CAB,4,dims([P,AI,AO,BI,CI,CO])) + PartialTrace(W_CAD,6,dims([P,AI,AO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CA,d_AO),[1,2,4,5,3],dims([P,AI,CI,CO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_CBD,6,dims([P,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CB,d_BO),[1,2,4,5,3],d([P,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CDA,2,dims([P,AI,CI,CO,DI,DO])) + PartialTrace(W_CDB,2,dims([P,BI,CI,CO,DI,DO])) == tensor_id(W_CD,d_DO)];
+            constr = [constr, PartialTrace(W_DAB,4,dims([P,AI,AO,BI,DI,DO])) + PartialTrace(W_DAC,4,dims([P,AI,AO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DA,d_AO),[1,2,4,5,3],dims([P,AI,DI,DO,AO]),0,1)];
+            constr = [constr, PartialTrace(W_DBA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_DBC,4,dims([P,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DB,d_BO),[1,2,4,5,3],dims([P,BI,DI,DO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_DCA,2,dims([P,AI,CI,CO,DI,DO])) + PartialTrace(W_DCB,2,dims([P,BI,CI,CO,DI,DO])) == PermuteSystems(tensor_id(W_DC,d_CO),[1,2,4,5,3],dims([P,CI,DI,DO,CO]),0,1)];
             
-            constr = [constr, PartialTrace(W_AB,4,dims([P,AI,AO,BI])) + PartialTrace(W_AC,4,dims([P,AI,AO,CI])) + PartialTrace(W_AD,4,dims([P,AI,AO,DI])) == tensorID(W_A,d_AO)];
-            constr = [constr, PartialTrace(W_BA,2,dims([P,AI,BI,BO])) + PartialTrace(W_BC,4,dims([P,BI,BO,CI])) + PartialTrace(W_BD,4,dims([P,BI,BO,DI])) == tensorID(W_B,d_BO)];
-            constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) + PartialTrace(W_CD,4,dims([P,CI,CO,DI])) == tensorID(W_C,d_CO)];
-            constr = [constr, PartialTrace(W_DA,2,dims([P,AI,DI,DO])) + PartialTrace(W_DB,2,dims([P,BI,DI,DO])) + PartialTrace(W_DC,2,dims([P,CI,DI,DO])) == tensorID(W_D,d_DO)];
+            constr = [constr, PartialTrace(W_AB,4,dims([P,AI,AO,BI])) + PartialTrace(W_AC,4,dims([P,AI,AO,CI])) + PartialTrace(W_AD,4,dims([P,AI,AO,DI])) == tensor_id(W_A,d_AO)];
+            constr = [constr, PartialTrace(W_BA,2,dims([P,AI,BI,BO])) + PartialTrace(W_BC,4,dims([P,BI,BO,CI])) + PartialTrace(W_BD,4,dims([P,BI,BO,DI])) == tensor_id(W_B,d_BO)];
+            constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) + PartialTrace(W_CD,4,dims([P,CI,CO,DI])) == tensor_id(W_C,d_CO)];
+            constr = [constr, PartialTrace(W_DA,2,dims([P,AI,DI,DO])) + PartialTrace(W_DB,2,dims([P,BI,DI,DO])) + PartialTrace(W_DC,2,dims([P,CI,DI,DO])) == tensor_id(W_D,d_DO)];
             
             if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
                 constr = [constr, PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) + PartialTrace(W_D,2,dims([P,DI])) == trace(W_A+W_B+W_C+W_D)/d_P*eye(d_P)];

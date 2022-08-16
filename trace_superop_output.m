@@ -22,7 +22,7 @@ function [Wr_new, dims_new, parties_new] = trace_superop_output(Wr,dims,parties,
     
     % We actually treat this as "measuring" the specified systems with deterministic POVM
     M = eye(d_F_sys,d_F_sys);
-    [Wr_new, dims_new, parties_new] = measureOutputOfProcess(Wr,dims,parties,M,F_sys);
+    [Wr_new, dims_new, parties_new] = measure_superop_output(Wr,dims,parties,M,F_sys);
     
     if input_is_process_matrix
         Wr_new = Wr_new{1};

@@ -91,7 +91,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
             disp('Calculating the general robustness wrt class QC-QC');
             disp('TODO');
     end
-    disp();
+    disp('');
     
     
     % Enforce witness to have unitary operations
@@ -101,8 +101,8 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
         end
         for i = 1:R
             for n = 1:N
-                constr = [constr, trRep(Sr{i},2*n,dims) == trRep(Sr{i},[2*n,2*n+1],dims)];
-                constr = [constr, trRep(Sr{i},2*n+1,dims) == trRep(Sr{i},[2*n,2*n+1],dims)];
+                constr = [constr, tr_replace(Sr{i},2*n,dims) == tr_replace(Sr{i},[2*n,2*n+1],dims)];
+                constr = [constr, tr_replace(Sr{i},2*n+1,dims) == tr_replace(Sr{i},[2*n,2*n+1],dims)];
             end
         end
     end
@@ -122,7 +122,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     
     %% Solve the SDP
 
-    if nargin < 5
+    if nargin < 6
         % default options
         yalmip_options = sdpsettings();
     end
@@ -137,7 +137,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
         end
     end    
     % Need to put back in the non-canonical ordering of the input
-    Sr_opt = operatorFromCanonicalOrdering(Sr_opt,dims_raw,parties_raw);
+    Sr_opt = superop_from_canonical_ordering(Sr_opt,dims_raw,parties_raw);
     
     if witness_from_basis
         coeffs_opt = value(coeffs);

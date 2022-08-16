@@ -77,7 +77,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
             disp('Calculating the general robustness wrt class QC-QC');
             disp('TODO');
     end
-    disp();
+    disp('');
     
     % Enforce unitary witness in primal form
     if unitary_ops
@@ -85,15 +85,15 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
             T_proj = T{i};
             for n = 1:N
                 % Constraint is to be in null space of (1-AI)AO and (1-AO)AI, for each party
-                T_proj = T_proj - (trRep(T_proj,2*n,dims) - trRep(T_proj,[2*n,2*n+1],dims));
-                T_proj = T_proj - (trRep(T_proj,2*n+1,dims) - trRep(T_proj,[2*n,2*n+1],dims));
+                T_proj = T_proj - (tr_replace(T_proj,2*n,dims) - tr_replace(T_proj,[2*n,2*n+1],dims));
+                T_proj = T_proj - (tr_replace(T_proj,2*n+1,dims) - tr_replace(T_proj,[2*n,2*n+1],dims));
             end
             constr = [constr, T_proj == 0];
         end
     end
     
     %% Solve the SDP
-    if nargin < 5
+    if nargin < 6
         % default options
         yalmip_options = sdpsettings();
     end
