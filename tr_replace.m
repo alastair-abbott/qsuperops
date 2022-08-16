@@ -1,11 +1,13 @@
-function XW = trRep(W, sys, dim)
-%trRep Computes the "trace-and-replace" operation
-%   XW = trRep(W,sys,dim) Traces out the systems specified by sys
+function XW = tr_replace(W, sys, dim)
+%tr_replace Computes the "trace-and-replace" operation
+%   XW = tr_replace(W,sys,dim) Traces out the systems specified by sys
 %   and replaces them with the normalised identity
 %   See, e.g., arXiv:1506.03776 [quant-ph].
 %	
 %   dim = [d1, d2, ...] specifies the dimensions of the spaces.
 %   sys is a vector indicating which of these spaces to trace out.
+%
+% Requires QETLAB for PartialTrace and PermuteSystems
 
 % Written by Alastair Abbott, last modified 19 April 2021
 
@@ -29,9 +31,9 @@ function XW = trRep(W, sys, dim)
 	
 	% Trace out the systems in sys and tensor idX at the start
     Wtraced = PartialTrace(W, sys, dim);
-    % W = Tensor(idX, Wtraced);
-    % Faster approach without explicitly computing Tensor (otherwise it's very slow with sdp vars)
-    XW = tensorID(Wtraced,dX,false)/dX;
+    % W = kron(idX, Wtraced);
+    % Faster approach without explicitly computing kron (otherwise it's very slow with sdp vars)
+    XW = tensor_id(Wtraced,dX,false)/dX;
     
     % PermuteSystems doesn't play well when some systems have dimension 1,
     % so we pretend these systems don't exist and adjust the indices accordingly
