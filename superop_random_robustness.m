@@ -1,13 +1,13 @@
-function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop_class,unitary_ops,yalmip_options)
+function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops)
 %superop_random_robustness Calculates the random robustness of a process or superinstrument
-%   [r, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop_class,unitary_ops,yalmip_options)
+%   [r, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops)
 %
 %   Computes the random robustness of the superinstrument Wr with respect to the given class
 %   of superoperators (by default, QC-CCs). 
 %   superop_class: 1 - QC-PAR; 2 - QC-FO; 3 (detault) - QC-CC; 4 - QC-QC
+%   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 %   unitary_ops: Calculate robustness corresponding to a witness with unitary operations for
 %               operations A_1,...,A_N. False by default.
-%   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 
 % Written by Alastair Abbott (2021), last modified 16 August 2022
 
@@ -22,12 +22,12 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
     [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims, parties);
 
-    if nargin < 4
+    if ~exist('superop_class','var')
         % By default, we do for QC-CCs
         superop_class = SUPEROP_CLASS_QCCC;
     end
 
-    if nargin < 5
+    if ~exist('unitary_ops','var')
        unitary_ops = false; 
     end
     
@@ -65,16 +65,16 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
     
     switch superop_class
         case SUPEROP_CLASS_PAR
-            disp('Calculating the general robustness wrt class QC-PAR (Parallel quantum circuits)');
+            disp('Calculating the random robustness wrt class QC-PAR (Parallel quantum circuits)');
             disp('TODO');
         case SUPEROP_CLASS_QCFO
-            disp('Calculating the general robustness wrt class QC-FO');
+            disp('Calculating the random robustness wrt class QC-FO');
             disp('TODO');
         case SUPEROP_CLASS_QCCC
-            disp('Calculating the general robustness wrt class QC-CC');
+            disp('Calculating the random robustness wrt class QC-CC');
             constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];
         case SUPEROP_CLASS_QCQC
-            disp('Calculating the general robustness wrt class QC-QC');
+            disp('Calculating the random robustness wrt class QC-QC');
             disp('TODO');
     end
     disp('');
@@ -93,7 +93,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
     end
     
     %% Solve the SDP
-    if nargin < 6
+    if ~exist('yalmip_options','var')
         % default options
         yalmip_options = sdpsettings();
     end

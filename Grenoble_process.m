@@ -2,6 +2,7 @@ function [W, dims, parties] = Grenoble_process(V1,V2,V3,V4,V5,V6,trace_F,input_s
 %Grenoble_process Generates the tripartite Grenoble QC-QC process 
 %   [W, dims, parties] = Grenoble_process()
 %   [W, dims, parties] = Grenoble_process(trace_F,input_state)
+%   [W, dims, parties] = Grenoble_process(V1,V2,V3,V4,V5,V6) 
 %   [W, dims, parties] = Grenoble_process(V1,V2,V3,V4,V5,V6,trace_F,input_state) 
 %
 %   The general form is given by Eq. (D7) of arXiv:2101.08796, and is specified by 6 isometries.

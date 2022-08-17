@@ -1,14 +1,14 @@
-function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims_raw,parties_raw,superop_class,unitary_ops,yalmip_options,witness_basis)
+function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims_raw,parties_raw,superop_class,yalmip_options,unitary_ops,witness_basis)
 %superop_random_robustness_witness Calculates the QC-CC random robustness witness of a process or superinstrument
-%   [Sr, yalmip_out] = superop_random_robustness_witness(Wr,dims,parties,superop_class,unitary_ops,yalmip_options)
-%   [Sr, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims,parties,superop_class,unitary_ops,yalmip_options,witness_basis)
+%   [Sr, yalmip_out] = superop_random_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops)
+%   [Sr, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops,witness_basis)
 %
 %   Compute the witness (wrt random robustness) of the superinstrument Wr with respect to given class of superoperators.  
 %   superop_class: 1 - QC-PAR; 2 - QC-FO; 3 (detault) - QC-CC; 4 - QC-QC
 %
+%   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 %   unitary_ops: Calculate robustness corresponding to a witness with unitary operations for
 %               operations A_1,...,A_N. False by default.
-%   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 %   witness_basis: Optional input providing a basis for the witness to be expressed in.
 %   In this case, the output coeffs will provide the optimal coeffs giving SrOpt{i} = \sum_b coeffs(i,b)*witnessBase(:,:,b)
 
@@ -25,17 +25,17 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
     [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw, parties_raw);
     
-    if nargin < 4
+    if ~exist('superop_class','var')
         % By default, we do for QC-CCs
         superop_class = SUPEROP_CLASS_QCCC;
     end
 
-    if nargin < 5
+    if ~exist('unitary_ops','var')
        unitary_ops = false; 
     end
     
     witness_from_basis = false;
-    if nargin >= 7
+    if exist('witness_basis','var')
         witness_from_basis = true;
     end
 
@@ -79,16 +79,16 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     
     switch superop_class
         case SUPEROP_CLASS_PAR
-            disp('Calculating the general robustness wrt class QC-PAR (Parallel quantum circuits)');
+            disp('Calculating the random robustness witness wrt class QC-PAR (Parallel quantum circuits)');
             disp('TODO');
         case SUPEROP_CLASS_QCFO
-            disp('Calculating the general robustness wrt class QC-FO');
+            disp('Calculating the random robustness witness wrt class QC-FO');
             disp('TODO');
         case SUPEROP_CLASS_QCCC
-            disp('Calculating the general robustness wrt class QC-CC');
+            disp('Calculating the random robustness witness wrt class QC-CC');
             constr = [superop_in_QCCC_witness_cone(Sr,dims,parties)];
         case SUPEROP_CLASS_QCQC
-            disp('Calculating the general robustness wrt class QC-QC');
+            disp('Calculating the random robustness witness wrt class QC-QC');
             disp('TODO');
     end
     disp('');
@@ -122,7 +122,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     
     %% Solve the SDP
 
-    if nargin < 6
+    if ~exist('yalmip_options','var')
         % default options
         yalmip_options = sdpsettings();
     end
