@@ -42,6 +42,7 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                 W_AF = W_AF + Wr{i};
             end
             W_A = 1/d_AO*PartialTrace(W_AF,[AO,F],dims);
+            constr = [constr, W_AF >= 0];
             constr = [constr, PartialTrace(W_AF,F,dims) == tensor_id(W_A,d_AO)];
             if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
                 % We only want it to be proportional to the identity, since we are only checking the cone

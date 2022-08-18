@@ -180,7 +180,15 @@ function is_valid = is_valid_superop(Wr, dims, parties, tol)
     end
     
     if input_is_sdpvar
-        is_valid = [constraints_PSD, trace(W) == d_O, W == Wproj];
+        % In some cases we might be able to know even an SDP var isn't a valid process
+        % e.g., if it's not normalised properly
+        if isa(trace(W) - d_O,'double') && abs(trace(W) - d_O) > tol
+            is_valid = false;
+        elseif isa(W - Wproj,'double') && ~matrix_is_equal(W-Wproj,zeros(prod(dims)),tol)
+            is_valid = false;
+        else 
+            is_valid = [constraints_PSD, trace(W) == d_O, W == Wproj];
+        end
     else
         is_PSD = all(constraints_PSD); % every W{r} is PSD
         is_normalised = abs(trace(W) - d_O) < tol;

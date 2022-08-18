@@ -66,7 +66,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
     switch superop_class
         case SUPEROP_CLASS_PAR
             disp('Calculating the random robustness wrt class QC-PAR (Parallel quantum circuits)');
-            disp('TODO');
+            constr = [constr, superop_in_QCPAR_cone(Wr_admixed,dims,parties)];
         case SUPEROP_CLASS_QCFO
             disp('Calculating the random robustness wrt class QC-FO');
             disp('TODO');
