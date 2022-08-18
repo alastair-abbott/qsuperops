@@ -1,9 +1,10 @@
-function is_valid = is_valid_process(Wr, dims, parties, tol)
+function is_valid = is_valid_superop(Wr, dims, parties, tol)
 %is_valid_process determines if input is a valid process matrix or superinstrument
-%   is_valid = is_valid_process(W, dims, parties, tol) is true if W is a valid process matrix or superinstrument.
+%   is_valid = is_valid_superop(W, dims, parties, tol) is true if W is a valid process matrix or superinstrument.
+%   If W is an sdpvar, then the function returns the yalmip constraints for Wr to be valid
 %   
 %   The arguments are specified as follows:
-%       - W: the (potential) process matrix, a d-d matrix, or a cell of d-d matrices
+%       - W: the (potential) process matrix, a d-d matrix, or a cell of d-d matrices (may be sdpvars)
 %       - dims: a vector specifying the dimensions of individual spaces and satisfying prod(dims) == d
 %       - parties: a cell-array specifying the spaces that correspond to each party
 %       - tol: the numerical tolerance for the validity check (default: 1e-6)
@@ -22,13 +23,26 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
         Wr = {Wr};
     end
     R = length(Wr); % number of superinstrument elements
+
+    % If Wr is an sdpvar then we want to create the sdpvar constraints instead
+    input_is_sdpvar = false;
+    for r = 1:R
+        if isa(Wr{r},'sdpvar')
+            input_is_sdpvar = true;
+            break
+        end
+    end
     
-    is_PSD = true;
+    constraints_PSD = [];
     W = zeros(prod(dims),prod(dims));
     for r = 1:R
         assert(all(prod(dims) == size(Wr{r})), 'Error: W size doesn''t match provided dimensions.');
         % Each element of superinstrument should be PSD
-        is_PSD = is_PSD && all(eig(Wr{r}) > -tol);
+        if input_is_sdpvar
+            constraints_PSD = [constraints_PSD, Wr{r} >= 0];
+        else
+            constraints_PSD = [constraints_PSD, all(eig(Wr{r}) > -tol)];
+        end
         W = W + Wr{r};
     end
 
@@ -49,9 +63,6 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             % Project W onto the space of valid processes
             Wproj = W - (tr_replace(W,F,dims) - tr_replace(W,[AO,F],dims)); % (1-AO)F
             Wproj = Wproj - (tr_replace(Wproj,[AI,AO,F],dims) - tr_replace(Wproj,[P,AI,AO,F],dims)); % (1-P)AF
-            
-            is_normalised = abs(trace(W) - d_O) < tol;
-            is_in_valid_space = matrix_is_equal(W,Wproj,tol);
               
         case 2
             %%
@@ -72,9 +83,6 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
             Wproj = Wproj - (tr_replace(Wproj,F,dims) - tr_replace(Wproj,[AO,F],dims) ...
                              - tr_replace(Wproj,[BO,F],dims) + tr_replace(Wproj,[AO,BO,F],dims)); % (1-AO)(1-BO)F
             Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[P,A,B,F],dims)); % (1-P)ABF
-            
-            is_normalised = abs(trace(W) - d_O) < tol;
-            is_in_valid_space = matrix_is_equal(W,Wproj,tol);
            
         case 3
             %%
@@ -108,9 +116,6 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
                              - tr_replace(Wproj,[AO,BO,CO,F],dims)); % (1-AO)(1-BO)(1-CO)F
             
             Wproj = Wproj - (tr_replace(Wproj,[A,B,C,F],dims) - tr_replace(Wproj,[P,A,B,C,F],dims)); % (1-P)ABCF
-            
-            is_normalised = abs(trace(W) - d_O) < tol;
-            is_in_valid_space = matrix_is_equal(W,Wproj,tol);
             
         case 4
             %%
@@ -168,14 +173,19 @@ function is_valid = is_valid_process(Wr, dims, parties, tol)
                              + tr_replace(Wproj,[AO,B0,CO,DO,F],dims)); % (1-AO)(1-BO)(1-CO)(1-DO)F
             
             Wproj = Wproj - (tr_replace(Wproj,[A,B,C,D,F],dims) - tr_replace(Wproj,[P,A,B,C,D,F],dims)); % (1-P)ABCDF
-            
-            is_normalised = abs(trace(W) - d_O) < tol;
-            is_in_valid_space = matrix_is_equal(W,Wproj,tol);
         otherwise
-            disp('Check currently only implement up to N=4.');
-            is_in_valid_space = false;
+            disp('Check currently only implemented up to N=4.');
+            is_valid = false;
+            return
     end
     
-    is_valid = is_PSD && is_normalised && is_in_valid_space;
+    if input_is_sdpvar
+        is_valid = [constraints_PSD, trace(W) == d_O, W == Wproj];
+    else
+        is_PSD = all(constraints_PSD); % every W{r} is PSD
+        is_normalised = abs(trace(W) - d_O) < tol;
+        is_in_valid_space = matrix_is_equal(W,Wproj,tol);
+        is_valid = is_PSD && is_normalised && is_in_valid_space;
+    end
 end
 

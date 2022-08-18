@@ -1,6 +1,6 @@
 function [W,dims,parties] = quantum_switch(N,d_t,trace_F_t,input_state)
 %quantum_switch Generates the process matrix for the N-switch
-%   [W,dims,parties] = quantum_switch(N,trace_F_t,input_state)
+%   [W,dims,parties] = quantum_switch(N,d_t,trace_F_t,input_state)
 %   N: number of parties
 %   d_t: target dimension. Default: 2
 %   trace_F_t: if true, throw away final target state. Default: false
