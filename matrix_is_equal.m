@@ -9,7 +9,7 @@ function is_equal = matrix_is_equal(A,B,tol)
 		tol = 0;
     end
 
-    is_equal = all(all(abs(A-B) < tol));
+    is_equal = all(all(abs(A-B) <= tol));
     
 end
 

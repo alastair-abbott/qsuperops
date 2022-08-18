@@ -30,38 +30,9 @@ function in_QCPAR_cone = superop_in_QCPAR_cone(Wr, dims, parties,tol)
     
     R = length(Wr);
     N = length(parties) - 2;
-    d = prod(dims);
     
     %% For parallel circuits it's easy to do for arbitrary N
     % In canonical ordering, input spaces are 2,4,... and output 3,5,...
-    
-    % If Wr is an sdpvar then we want to create the sdpvar constraints instead
-    input_is_sdpvar = false;
-    for r = 1:R
-        if isa(Wr{r},'sdpvar')
-            input_is_sdpvar = true;
-            break
-        end
-    end
-
-    constraints_PSD = [];
-    W = zeros(d,d);
-    for r = 1:R
-        assert(all(d == size(Wr{r})), 'Error: W size doesn''t match provided dimensions.');
-        % Each element of superinstrument should be PSD
-        if input_is_sdpvar
-            constraints_PSD = [constraints_PSD, Wr{r} >= 0];
-        else
-            constraints_PSD = [constraints_PSD, all(eig(Wr{r}) > -tol)];
-        end
-        W = W + Wr{r};
-    end
-
-    % If Wr is an sdpvar then we want to create the sdpvar constraints instead
-    input_is_sdpvar = false;
-    if isa(W,'sdpvar')
-        input_is_sdpvar = true;
-    end
 
     % All input and output spaces
     P = 1;
@@ -69,23 +40,51 @@ function in_QCPAR_cone = superop_in_QCPAR_cone(Wr, dims, parties,tol)
     AO = 3:2:(2*N+1);
     F = 2*N + 2;
 
-    d_P = (dims(P));
-    d_O = prod(dims(AO));
+    d_P = prod(dims(P));
+    d_AO = prod(dims(AO));
 
-    if input_is_sdpvar
-        in_QCPAR_cone = [W >= 0];
+    % Keep the logical and yalmip constraints separate until the end
+    constraints_logical = [true];
+    constraints_yalmip = [true];
+
+    % First we check each Wr{r} >= 0
+    constraints_temp = superop_in_PSD_cone(Wr,tol);
+    if isa(constraints_temp,'logical')
+        constraints_logical = [constraints_logical, constraints_temp];
     else
-        in_QCPAR_cone = [all(eig(Wr{r}) > -tol)];
+        constraints_yalmip = [constraints_yalmip, constraints_temp];
     end
 
+    W = Wr{1};
+    for r = 2:R
+       W = W + Wr{r}; 
+    end
 
-    W_I = 1/d_O*PartialTrace(W,[AO,F],dims);
+    W_I = 1/d_AO*PartialTrace(W,[AO,F],dims);
 
-    in_QCPAR_cone = [in_QCPAR_cone, PartialTrace(W,F,dims) == PermuteSystems(tensor_id(W_I,d_O),[P,AI,AO],dims([P,AI,AO]),0,1)];
+    diff_F_last = PartialTrace(W,F,dims) - PermuteSystems(tensor_id(W_I,d_AO),[P,AI,AO],dims([P,AI,AO]),0,1);
+    if isa(diff_F_last,'sdpvar')
+        constraints_yalmip = [constraints_yalmip, diff_F_last == 0];
+    else
+        constraints_logical = [constraints_logical, matrix_is_equal(diff_F_last,zeros(size(diff_F_last)),tol)];
+    end
+
     if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
         % We only want it to be proportional to the identity, since we are only checking the cone
-        in_QCPAR_cone = [in_QCPAR_cone, PartialTrace(W_I,2:(N+1),dims([P,AO])) == trace(W_I)/d_P*eye(d_P)];
+        diff_P_first = PartialTrace(W_I,2:(N+1),dims([P,AO])) - trace(W_I)/d_P*eye(d_P);
+        if isa(diff_F_last,'sdpvar')
+            constraints_yalmip = [constraints_yalmip, diff_P_first == 0];
+        else
+            constraints_logical = [constraints_logical, matrix_is_equal(diff_P_first,zeros(d_P),tol)];
+        end
     end
 
+    % Combine the two types of constraints
+    constraints_logical = all(constraints_logical);
+    if constraints_logical == false
+        in_QCPAR_cone = false;
+    else
+        in_QCPAR_cone = constraints_yalmip;
+    end
 end
 

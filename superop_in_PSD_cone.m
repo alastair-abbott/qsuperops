@@ -19,22 +19,25 @@ function cone_constraints = superop_in_PSD_cone(Wr,tol)
     
     R = length(Wr);
 
-    % Initialise like this to ensure it stays a logical vector for numeric input
-    cone_constraints = [true];
+    % Keep the logical and yalmip constraints separate until the end
+    constraints_logical = [true];
+    constraints_yalmip = [true];
 
     for r = 1:R
         % Each element of superinstrument should be PSD
         if isa(Wr{r},'sdpvar')
-            cone_constraints = [cone_constraints, Wr{r} >= 0];
+            constraints_yalmip = [constraints_yalmip, Wr{r} >= 0];
         else
-            cone_constraints = [cone_constraints, all(eig(Wr{r}) > -tol)];
+            constraints_logical = [constraints_logical, min(eig(Wr{r})) >= -tol];
         end
     end
 
-    % If all the elements of Wr were numeric, we take logical AND.
-    % If we had at least one sdpvar, then cone_constraints are yalmip constraints
-    if isa(cone_constraints,'logical')
-        cone_constraints = all(cone_constraints);
+    % Combine the two types of constraints
+    constraints_logical = all(constraints_logical);
+    if constraints_logical == false
+        cone_constraints = false;
+    else
+        cone_constraints = constraints_yalmip;
     end
 
 end
