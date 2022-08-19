@@ -59,8 +59,6 @@ function in_QCFO_cone = superop_in_QCFO_cone(Wr, dims, parties,tol)
 
     P = 1;
     d_P = dims(P);
-    F = 2*N + 2;
-    d_O = prod(dims(1:2:(2*N+1)));
 
     % Define the reduced matrices
     W_n = cell(1,N+1);

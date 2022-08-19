@@ -16,6 +16,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
     SUPEROP_CLASS_QCFO = 2;
     SUPEROP_CLASS_QCCC = 3;
     SUPEROP_CLASS_QCQC = 4;
+    SUPEROP_CLASS_convQCFO = 5;
 
     %% Process the input
     % First put Wr in canonical ordering (this checks the input validity too)
@@ -74,6 +75,9 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
         case SUPEROP_CLASS_QCFO
             disp('Calculating the random robustness wrt class QC-FO');
             constr = [constr, superop_in_QCFO_cone(Wr_admixed,dims,parties)];
+        case SUPEROP_CLASS_convQCFO
+            disp('Calculating the random robustness wrt class conv(QC-FO)');
+            constr = [constr, superop_in_convQCFO_cone(Wr_admixed,dims,parties)];
         case SUPEROP_CLASS_QCCC
             disp('Calculating the random robustness wrt class QC-CC');
             constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];
