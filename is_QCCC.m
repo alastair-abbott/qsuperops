@@ -44,7 +44,7 @@ function is_valid_QCCC = is_QCCC(Wr, dims, parties, tol)
     else
         % input is an explicit W; check the random robustness
         is_valid_QCCC = (abs(trace(W) - d_O) <= tol) ...
-            && superop_random_robustness(Wr,dims,parties,3,sdpsettings('solver','mosek','verbose',0)) < tol;
+            && superop_random_robustness(Wr,dims,parties,'QCCC',sdpsettings('solver','mosek','verbose',0)) < tol;
     end
 end
 

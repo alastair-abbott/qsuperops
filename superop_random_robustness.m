@@ -4,19 +4,12 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
 %
 %   Computes the random robustness of the superinstrument Wr with respect to the given class
 %   of superoperators (by default, QC-CCs). 
-%   superop_class: 1 - QC-PAR; 2 - QC-FO; 3 (detault) - QC-CC; 4 - QC-QC
+%   superop_class: a string, on of: QCPAR, QCFO, convQCFO, QCCC, QCQC
 %   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 %   unitary_ops: Calculate robustness corresponding to a witness with unitary operations for
 %               operations A_1,...,A_N. False by default.
 
 % Written by Alastair Abbott (2021), last modified 16 August 2022
-
-    %% Constants
-    SUPEROP_CLASS_PAR = 1;
-    SUPEROP_CLASS_QCFO = 2;
-    SUPEROP_CLASS_QCCC = 3;
-    SUPEROP_CLASS_QCQC = 4;
-    SUPEROP_CLASS_convQCFO = 5;
 
     %% Process the input
     % First put Wr in canonical ordering (this checks the input validity too)
@@ -29,7 +22,8 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
 
     if ~exist('superop_class','var')
         % By default, we do for QC-CCs
-        superop_class = SUPEROP_CLASS_QCCC;
+        disp('Calculating the random robustness wrt class QC-CC');
+        superop_class = 'QCCC';
     end
 
     if ~exist('unitary_ops','var')
@@ -68,22 +62,25 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
         Wr_admixed{i} = Wr{i} + r_rand*noisy_W/R - T{i};
     end
     
-    switch superop_class
-        case SUPEROP_CLASS_PAR
-            disp('Calculating the random robustness wrt class QC-PAR (Parallel quantum circuits)');
+    switch upper(superop_class)
+        case 'QCPAR'
+            % disp('Calculating the random robustness wrt class QC-PAR (Parallel quantum circuits)');
             constr = [constr, superop_in_QCPAR_cone(Wr_admixed,dims,parties)];
-        case SUPEROP_CLASS_QCFO
-            disp('Calculating the random robustness wrt class QC-FO');
+        case 'QCFO'
+            % disp('Calculating the random robustness wrt class QC-FO');
             constr = [constr, superop_in_QCFO_cone(Wr_admixed,dims,parties)];
-        case SUPEROP_CLASS_convQCFO
-            disp('Calculating the random robustness wrt class conv(QC-FO)');
+        case 'CONVQCFO'
+            % disp('Calculating the random robustness wrt class conv(QC-FO)');
             constr = [constr, superop_in_convQCFO_cone(Wr_admixed,dims,parties)];
-        case SUPEROP_CLASS_QCCC
-            disp('Calculating the random robustness wrt class QC-CC');
+        case 'QCCC'
+            % disp('Calculating the random robustness wrt class QC-CC');
             constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];
-        case SUPEROP_CLASS_QCQC
-            disp('Calculating the random robustness wrt class QC-QC');
+        case 'QCQC'
+            % disp('Calculating the random robustness wrt class QC-QC');
             disp('TODO');
+        otherwise
+            disp('Warning, invalid superoperator type specified. Calculating for QC-CCs')
+            constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];
     end
     disp('');
     

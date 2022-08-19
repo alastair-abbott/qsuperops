@@ -40,11 +40,11 @@ function is_valid_convQCFO = is_convQCFO(Wr, dims, parties, tol)
     end
 
     if isa(W,'sdpvar')
-        is_valid_convQCFO = [trace(W) == d_O, superop_in_convQCFO_cone(Wr,dims,parties,tol)];
+        is_valid_convQCFO = [trace(W) == d_O, superop_in_convQCFO_cone(Wr,dims,parties)];
     else
         % input is an explicit W; check the random robustness
         is_valid_convQCFO = (abs(trace(W) - d_O) <= tol) ...
-            && superop_random_robustness(Wr,dims,parties,5,sdpsettings('solver','mosek','verbose',0)) < tol;
+            && superop_random_robustness(Wr,dims,parties,'convQCFO',sdpsettings('solver','mosek','verbose',0)) < tol;
     end
 end
 
