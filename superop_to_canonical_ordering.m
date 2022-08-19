@@ -7,9 +7,25 @@ function [Wr_canonical,dims_canonical,parties_canonical] = superop_to_canonical_
 %   operator_to_canonical_ordering transforms any such operator into one with spaces ordered as
 %   P,AI,AO,BI,BO,...,F, and all subspaces grouped together
 %
+%   If parties is not specified, dims will be interpreted as specifying the dims of spaces
+%   P,AI,AO,...,F. Using this shortcut is not recommended!
+%
 % Requires QETLAB for PermuteSystems
 
 % Written by Alastair Abbott, last modified 28 April 2021
+
+    % Check parties are properly specified.
+    if ~exist('parties','var')
+        N = length(dims)/2 - 1;
+        assert(mod(N,1) == 0, 'Error: please specify parties or ensure dimensions of P and F specified (even if trivial)');
+        disp(['Warning: parties not specified. Interpreting superoperator as ', num2str(N), '-partite operator.']);
+        parties = cell(1,N+2);
+        parties{1} = {[],1};
+        for n = 1:N
+            parties{n+1} = {2*n, 2*n+1};
+        end
+        parties{end} = {2*N+2,[]};
+    end
 
     % Everything here works equally well for witnesses as for process matrices
     input_is_process_matrix = false;

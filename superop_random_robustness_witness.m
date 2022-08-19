@@ -23,7 +23,12 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     %% Process the input
     % First put Wr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
-    [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw, parties_raw);
+    if exist('parties_raw','var')
+        [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw, parties_raw);
+    else
+        [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw);
+        parties_raw = parties;
+    end
     
     if ~exist('superop_class','var')
         % By default, we do for QC-CCs

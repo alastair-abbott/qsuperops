@@ -8,7 +8,7 @@ function cone_constraints = superop_in_PSD_cone(Wr,tol)
 % Written by Alastair Abbott 2022, last modified 18 August 2022
 
     % default tolerance
-    if nargin < 2
+    if ~exist('tol','var')
         tol = 1e-6;
     end
 

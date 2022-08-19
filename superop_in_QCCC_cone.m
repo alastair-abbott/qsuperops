@@ -14,7 +14,11 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
 
     % First put Wr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
-    [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims, parties);
+    if exist('parties','var')
+        [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims, parties);
+    else
+        [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims);
+    end
 
     % Treat a process matrix as a 1-element superinstrument
     if ~iscell(Wr)

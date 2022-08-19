@@ -10,7 +10,11 @@ function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
 
     % First put Sr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
-    [Sr, dims, parties] = superop_to_canonical_ordering(Sr, dims, parties);
+    if exist('parties','var')
+        [Sr, dims, parties] = superop_to_canonical_ordering(Sr, dims, parties);
+    else
+        [Sr, dims, parties] = superop_to_canonical_ordering(Sr, dims);
+    end
 
     % treat a process matrix witness as a single element superinstrument witness
     if ~iscell(Sr)
