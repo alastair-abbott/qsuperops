@@ -12,6 +12,11 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
 
 % Written by Alastair Abbott 2021, last modified 16 August 2022
 
+    % default tolerance
+    if ~exist('tol','var')
+        tol = 1e-12;
+    end
+
     % First put Wr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
     if exist('parties','var')
@@ -48,9 +53,16 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             W_A = 1/d_AO*PartialTrace(W_AF,[AO,F],dims);
             constr = [constr, W_AF >= 0];
             constr = [constr, PartialTrace(W_AF,F,dims) == tensor_id(W_A,d_AO)];
-            if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
+            if d_P ~= 1 % Otherwise this is trvial
                 % We only want it to be proportional to the identity, since we are only checking the cone
-                constr = [constr, PartialTrace(W_A,2,dims([P,AI])) == trace(W_A)/d_P*eye(d_P)];
+                % We need to also be careful because sometimes this constraint is trivially satisfied
+                % but numerical error makes Yalmip think it's false
+                diff = PartialTrace(W_A,2,dims([P,AI])) - trace(W_A)/d_P*eye(d_P);
+                if isa(diff,'sdpvar')
+                    constr = [constr, diff == 0];
+                else
+                    constr = [constr, matrix_is_equal(diff,zeros(d_P),tol)];
+                end
             end 
         case 2
             % Recall we now have a conically ordered process and we've grouped the "sub"-spaces
@@ -87,10 +99,16 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             constr = [constr, PartialTrace(W_BAF,F,dims) == PermuteSystems(tensor_id(W_BA,d_AO),[P,AI,BI,BO,AO],dims([P,AI,BI,BO,AO]),0,1)];
             constr = [constr, PartialTrace(W_AB,BI,dims(P:BI)) == tensor_id(W_A,d_AO)];
             constr = [constr, PartialTrace(W_BA,AI,dims([P,AI,BI,BO])) == tensor_id(W_B,d_BO)];
-            if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
-                % Careful! We don't have equality with the identity, but rather proportional to identity
-                % since we're just looking at the unnormalised cone. Really its the "(1-P)" trace and replace condition.
-                constr = [constr, PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) == trace(W_A+W_B)/d_P*eye(d_P)];
+            if d_P ~= 1 % Otherwise this is trvial
+                % We only want it to be proportional to the identity, since we are only checking the cone
+                % We need to also be careful because sometimes this constraint is trivially satisfied
+                % but numerical error makes Yalmip think it's false
+                diff = PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) - trace(W_A+W_B)/d_P*eye(d_P);
+                if isa(diff,'sdpvar')
+                    constr = [constr, diff == 0];
+                else
+                    constr = [constr, matrix_is_equal(diff,zeros(d_P),tol)];
+                end
             end 
         case 3
             P = 1; d_P = dims(P);
@@ -172,8 +190,16 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             constr = [constr, PartialTrace(W_BA,2,dims([P,AI,BI,BO])) + PartialTrace(W_BC,4,dims([P,BI,BO,CI])) == tensor_id(W_B,d_BO)];
             constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) == tensor_id(W_C,d_CO)];
             
-            if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
-                constr = [constr, PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) == trace(W_A+W_B+W_C)/d_P*eye(d_P)];
+            if d_P ~= 1 %Otherwise this is trvial
+                % We only want it to be proportional to the identity, since we are only checking the cone
+                % We need to also be careful because sometimes this constraint is trivially satisfied
+                % but numerical error makes Yalmip think it's false
+                diff = PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) - trace(W_A+W_B+W_C)/d_P*eye(d_P);
+                if isa(diff,'sdpvar')
+                    constr = [constr, diff == 0];
+                else
+                    constr = [constr, matrix_is_equal(diff,zeros(d_P),tol)];
+                end
             end     
         case 4
             P = 1; d_P = dims(P);
@@ -437,8 +463,16 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             constr = [constr, PartialTrace(W_CA,2,dims([P,AI,CI,CO])) + PartialTrace(W_CB,2,dims([P,BI,CI,CO])) + PartialTrace(W_CD,4,dims([P,CI,CO,DI])) == tensor_id(W_C,d_CO)];
             constr = [constr, PartialTrace(W_DA,2,dims([P,AI,DI,DO])) + PartialTrace(W_DB,2,dims([P,BI,DI,DO])) + PartialTrace(W_DC,2,dims([P,CI,DI,DO])) == tensor_id(W_D,d_DO)];
             
-            if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
-                constr = [constr, PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) + PartialTrace(W_D,2,dims([P,DI])) == trace(W_A+W_B+W_C+W_D)/d_P*eye(d_P)];
+            if d_P ~= 1 %Otherwise this is trvial
+                % We only want it to be proportional to the identity, since we are only checking the cone
+                % We need to also be careful because sometimes this constraint is trivially satisfied
+                % but numerical error makes Yalmip think it's false
+                diff = PartialTrace(W_A,2,dims([P,AI])) + PartialTrace(W_B,2,dims([P,BI])) + PartialTrace(W_C,2,dims([P,CI])) + PartialTrace(W_D,2,dims([P,DI])) - trace(W_A+W_B+W_C+W_D)/d_P*eye(d_P);
+                if isa(diff,'sdpvar')
+                    constr = [constr, diff == 0];
+                else
+                    constr = [constr, matrix_is_equal(diff,zeros(d_P),tol)];
+                end
             end        
         otherwise
             error('Currently only implemented up to N=4');
