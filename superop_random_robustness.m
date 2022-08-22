@@ -77,7 +77,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
             constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];
         case 'QCQC'
             % disp('Calculating the random robustness wrt class QC-QC');
-            disp('TODO');
+            constr = [constr, superop_in_QCQC_cone(Wr_admixed,dims,parties)];
         otherwise
             disp('Warning, invalid superoperator type specified. Calculating for QC-CCs')
             constr = [constr, superop_in_QCCC_cone(Wr_admixed,dims,parties)];

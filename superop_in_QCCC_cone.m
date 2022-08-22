@@ -454,7 +454,7 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
             constr = [constr, PartialTrace(W_BCA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_BCD,6,dims([P,BI,BO,CI,CO,DI])) == tensor_id(W_BC,d_CO)];
             constr = [constr, PartialTrace(W_BDA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_BDC,4,dims([P,BI,BO,CI,DI,DO])) == tensor_id(W_BD,d_DO)];
             constr = [constr, PartialTrace(W_CAB,4,dims([P,AI,AO,BI,CI,CO])) + PartialTrace(W_CAD,6,dims([P,AI,AO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CA,d_AO),[1,2,4,5,3],dims([P,AI,CI,CO,AO]),0,1)];
-            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_CBD,6,dims([P,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CB,d_BO),[1,2,4,5,3],d([P,BI,CI,CO,BO]),0,1)];
+            constr = [constr, PartialTrace(W_CBA,2,dims([P,AI,BI,BO,CI,CO])) + PartialTrace(W_CBD,6,dims([P,BI,BO,CI,CO,DI])) == PermuteSystems(tensor_id(W_CB,d_BO),[1,2,4,5,3],dims([P,BI,CI,CO,BO]),0,1)];
             constr = [constr, PartialTrace(W_CDA,2,dims([P,AI,CI,CO,DI,DO])) + PartialTrace(W_CDB,2,dims([P,BI,CI,CO,DI,DO])) == tensor_id(W_CD,d_DO)];
             constr = [constr, PartialTrace(W_DAB,4,dims([P,AI,AO,BI,DI,DO])) + PartialTrace(W_DAC,4,dims([P,AI,AO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DA,d_AO),[1,2,4,5,3],dims([P,AI,DI,DO,AO]),0,1)];
             constr = [constr, PartialTrace(W_DBA,2,dims([P,AI,BI,BO,DI,DO])) + PartialTrace(W_DBC,4,dims([P,BI,BO,CI,DI,DO])) == PermuteSystems(tensor_id(W_DB,d_BO),[1,2,4,5,3],dims([P,BI,DI,DO,BO]),0,1)];

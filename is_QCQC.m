@@ -1,6 +1,6 @@
-function is_valid_QCCC = is_QCCC(Wr, dims, parties, tol)
-%is_QCCC determines if input is a Quantum Circuit with Classical Control of causal order (QC-CC) processes
-%   is_valid_QCCC = is_QCCC(W, dims, parties, tol) is true if W is a valid QC-CC
+function is_valid_QCQC = is_QCQC(Wr, dims, parties, tol)
+%is_QCCC determines if input is a Quantum Circuit with Quantum Control of causal order (QC-QC) processes
+%   is_valid_QCQC = is_QCQC(W, dims, parties, tol) is true if W is a valid QC-QC
 %   If W is an sdpvar, then the function returns the yalmip constraints for Wr to be valid
 %   
 %   The arguments are specified as follows:
@@ -9,7 +9,7 @@ function is_valid_QCCC = is_QCCC(Wr, dims, parties, tol)
 %       - parties: a cell-array specifying the spaces that correspond to each party
 %       - tol: the numerical tolerance for the validity check (default: 1e-6)
 
-% Written by Alastair Abbott, last modified 19 August 2022
+% Written by Alastair Abbott, last modified 22 August 2022
 
     % default tolerance
     if ~exist('tol','var')
@@ -40,11 +40,11 @@ function is_valid_QCCC = is_QCCC(Wr, dims, parties, tol)
     end
 
     if isa(W,'sdpvar')
-        is_valid_QCCC = [trace(W) == d_O, superop_in_QCCC_cone(Wr,dims,parties)];
+        is_valid_QCQC = [trace(W) == d_O, superop_in_QCQC_cone(Wr,dims,parties)];
     else
         % input is an explicit W; check the random robustness
-        is_valid_QCCC = (abs(trace(W) - d_O) <= tol) ...
-            && superop_random_robustness(Wr,dims,parties,'QCCC',sdpsettings('solver','mosek','verbose',0)) < tol;
+        is_valid_QCQC = (abs(trace(W) - d_O) <= tol) ...
+            && superop_random_robustness(Wr,dims,parties,'QCQC',sdpsettings('solver','mosek','verbose',0)) < tol;
     end
 end
 
