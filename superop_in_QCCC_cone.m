@@ -51,7 +51,8 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                 W_AF = W_AF + Wr{i};
             end
             W_A = 1/d_AO*PartialTrace(W_AF,[AO,F],dims);
-            constr = [constr, W_AF >= 0];
+
+            constr = [constr, superop_in_PSD_cone(Wr)];
             constr = [constr, PartialTrace(W_AF,F,dims) == tensor_id(W_A,d_AO)];
             if d_P ~= 1 % Otherwise this is trvial
                 % We only want it to be proportional to the identity, since we are only checking the cone
@@ -80,9 +81,9 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                       
                 % Define last element from others rather than enforcing an equality constraints
                 Wr_BAF{i} = Wr{i} - Wr_ABF{i}; 
-                constr = [constr, Wr_ABF{i} >= 0, Wr_BAF{i} >= 0];  
             end
-            
+            constr = [constr, superop_in_PSD_cone(Wr_ABF), superop_in_PSD_cone(Wr_BAF)];
+
             W_ABF = Wr_ABF{1};
             W_BAF = Wr_BAF{1};
             for i = 2:R
@@ -134,10 +135,10 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                 Wr_CABF{i} = sdpvar(d,d,'hermitian','complex');
                 
                 % Define last element from others rather than enforcing an equality constraints
-                Wr_CBAF{i} = Wr{i} - (Wr_ABCF{i} + Wr_ACBF{i} + Wr_BACF{i} + Wr_BCAF{i} + Wr_CABF{i});
-                constr = [constr, Wr_ABCF{i} >= 0, Wr_ACBF{i} >= 0, Wr_BACF{i} >= 0, ...
-                                  Wr_BCAF{i} >= 0, Wr_CABF{i} >= 0, Wr_CBAF{i} >= 0];  
+                Wr_CBAF{i} = Wr{i} - (Wr_ABCF{i} + Wr_ACBF{i} + Wr_BACF{i} + Wr_BCAF{i} + Wr_CABF{i}); 
             end
+            constr = [constr, superop_in_PSD_cone(Wr_ABCF), superop_in_PSD_cone(Wr_ACBF), superop_in_PSD_cone(Wr_BACF), ...
+                              superop_in_PSD_cone(Wr_BCAF), superop_in_PSD_cone(Wr_CABF), superop_in_PSD_cone(Wr_CBAF)];
             
             W_ABCF = Wr_ABCF{1};
             W_ACBF = Wr_ACBF{1};
@@ -269,12 +270,13 @@ function cone_constraints = superop_in_QCCC_cone(Wr, dims, parties)
                                   + Wr_BACDF{i} + Wr_BADCF{i} + Wr_BCADF{i} + Wr_BCDAF{i} + Wr_BDACF{i} + Wr_BDCAF{i} ...
                                   + Wr_CABDF{i} + Wr_CADBF{i} + Wr_CBADF{i} + Wr_CBDAF{i} + Wr_CDABF{i} +  Wr_CDBAF{i} ...
                                   + Wr_DABCF{i} + Wr_DACBF{i} + Wr_DBACF{i} + Wr_DBCAF{i} + Wr_DCABF{i});
-
-                constr = [constr, Wr_ABCDF{i} >= 0, Wr_ABDCF{i} >= 0, Wr_ACBDF{i} >= 0, Wr_ACDBF{i} >= 0, Wr_ADBCF{i} >= 0, Wr_ADCBF{i} >= 0, ...
-                                  Wr_BACDF{i} >= 0, Wr_BADCF{i} >= 0, Wr_BCADF{i} >= 0, Wr_BCDAF{i} >= 0, Wr_BDACF{i} >= 0, Wr_BDCAF{i} >= 0, ...
-                                  Wr_CABDF{i} >= 0, Wr_CADBF{i} >= 0, Wr_CBADF{i} >= 0, Wr_CBDAF{i} >= 0, Wr_CDABF{i} >= 0, Wr_CDBAF{i} >= 0, ...
-                                  Wr_DABCF{i} >= 0, Wr_DACBF{i} >= 0, Wr_DBACF{i} >= 0, Wr_DBCAF{i} >= 0, Wr_DCABF{i} >= 0, Wr_DCBAF{i} >= 0];
             end
+            constr = [constr, superop_in_PSD_cone(Wr_ABCDF), superop_in_PSD_cone(Wr_ABDCF), superop_in_PSD_cone(Wr_ACBDF), superop_in_PSD_cone(Wr_ACDBF), ...
+                              superop_in_PSD_cone(Wr_ADBCF), superop_in_PSD_cone(Wr_ADCBF), superop_in_PSD_cone(Wr_BACDF), superop_in_PSD_cone(Wr_BADCF), ...
+                              superop_in_PSD_cone(Wr_BCADF), superop_in_PSD_cone(Wr_BCDAF), superop_in_PSD_cone(Wr_BDACF), superop_in_PSD_cone(Wr_BDCAF), ...
+                              superop_in_PSD_cone(Wr_CABDF), superop_in_PSD_cone(Wr_CADBF), superop_in_PSD_cone(Wr_CBADF), superop_in_PSD_cone(Wr_CBDAF), ...
+                              superop_in_PSD_cone(Wr_CDABF), superop_in_PSD_cone(Wr_CDBAF), superop_in_PSD_cone(Wr_DABCF), superop_in_PSD_cone(Wr_DACBF), ...
+                              superop_in_PSD_cone(Wr_DBACF), superop_in_PSD_cone(Wr_DBCAF), superop_in_PSD_cone(Wr_DCABF), superop_in_PSD_cone(Wr_DCBAF)];
             
             W_ABCDF = Wr_ABCDF{1};
             W_ABDCF = Wr_ABDCF{1};
