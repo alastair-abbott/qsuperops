@@ -15,16 +15,16 @@ function [Wr_canonical,dims_canonical,parties_canonical] = superop_to_canonical_
 % Written by Alastair Abbott, last modified 28 April 2021
 
     % Check parties are properly specified.
-    if ~exist('parties','var')
+    if ~exist('parties','var') || isempty(parties)
         N = length(dims)/2 - 1;
         assert(mod(N,1) == 0, 'Error: please specify parties or ensure dimensions of P and F specified (even if trivial)');
         disp(['Warning: parties not specified. Interpreting superoperator as ', num2str(N), '-partite operator.']);
         parties = cell(1,N+2);
-        parties{1} = {[],1};
+        parties{1} = {1};
         for n = 1:N
             parties{n+1} = {2*n, 2*n+1};
         end
-        parties{end} = {2*N+2,[]};
+        parties{end} = {2*N+2};
     end
 
     % Everything here works equally well for witnesses as for process matrices
@@ -47,15 +47,15 @@ function [Wr_canonical,dims_canonical,parties_canonical] = superop_to_canonical_
     dims_canonical = zeros(1,2*N+2);
     parties_canonical = cell(1,N+2);
     
-    dims_canonical(1) = prod(dims(parties{1}{2}));
-    parties_canonical{1} = {[],1};
+    dims_canonical(1) = prod(dims(parties{1}{1}));
+    parties_canonical{1} = {1};
     for n = 1:N
         dims_canonical(2*n) = prod(dims(parties{n+1}{1}));
         dims_canonical(2*n+1) = prod(dims(parties{n+1}{2}));
         parties_canonical{n+1} = {2*n,2*n+1};
     end
     dims_canonical(end) = prod(dims(parties{N+2}{1}));
-    parties_canonical{end} = {2*N+2,[]};
+    parties_canonical{end} = {2*N+2};
     
     dI = prod(dims_canonical(2:2:end));
     dO = prod(dims_canonical(1:2:end));
@@ -64,10 +64,11 @@ function [Wr_canonical,dims_canonical,parties_canonical] = superop_to_canonical_
     % We will permute the process so that the systems are ordered canonically
     % This will make things much easier later, since we can assume the ordering
     Wr_canonical = cell(1,R);
-    perm = [];
-    for n = 1:N+2
+    perm = [parties{1}{1}];
+    for n = 2:N+1
        perm = [perm, parties{n}{1}, parties{n}{2}]; 
     end
+    perm = [perm, parties{N+2}{1}];
     assert(length(perm) == length(dims), 'Incompatibility between dimensions and parties.');
     for i = 1:R
        Wr_canonical{i} = PermuteSystems(Wr{i},perm,dims); 

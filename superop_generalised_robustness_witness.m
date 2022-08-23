@@ -1,9 +1,9 @@
-function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims_raw,parties_raw,superop_class,yalmip_options,unitary_ops,witness_basis)
-%superop_random_robustness_witness Calculates the random robustness witness of a process or superinstrument
-%   [Sr, yalmip_out] = superop_random_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops)
-%   [Sr, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops,witness_basis)
+function [Sr_opt, yalmip_out, coeffs_opt] = superop_generalised_robustness_witness(Wr,dims_raw,parties_raw,superop_class,yalmip_options,unitary_ops,witness_basis)
+%superop_generalised_robustness_witness Calculates the generalised robustness witness of a process or superinstrument
+%   [Sr, yalmip_out] = superop_generalised_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops)
+%   [Sr, yalmip_out, coeffs_opt] = superop_generalised_robustness_witness(Wr,dims,parties,superop_class,yalmip_options,unitary_ops,witness_basis)
 %
-%   Compute the witness (wrt random robustness) of the superinstrument Wr with respect to given class of superoperators.  
+%   Compute the witness (wrt generalised robustness) of the superinstrument Wr with respect to given class of superoperators.  
 %   superop_class: a string, on of: QCPAR, QCFO, convQCFO, QCCC, QCQC
 %
 %   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
@@ -12,7 +12,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
 %   witness_basis: Optional input providing a basis for the witness to be expressed in.
 %   In this case, the output coeffs will provide the optimal coeffs giving SrOpt{i} = \sum_b coeffs(i,b)*witnessBase(:,:,b)
 
-% Written by Alastair Abbott (2021), last modified 16 August 2022
+% Written by Alastair Abbott (2022), last modified 23 August 2022
 
     %% Process the input
     % First put Wr in canonical ordering (this checks the input validity too)

@@ -22,7 +22,7 @@ function [W,dims,parties] = OCB_process_matrix(eta1,eta2)
     assert(eta1^2 + eta2^2 <= 1, 'Error: inputs must satisfy eta1^2 + eta2^2 <= 1')
 
     dims = [2,2,2,2];
-    parties = {{[],[]},{1,2},{3,4},{[],[]}};
+    parties = {{[]},{1,2},{3,4},{[]}};
 
     id = eye(2);
     sx = [0,1;1,0];

@@ -31,7 +31,7 @@ function [W, dims, parties] = Lugano_process(purification)
         BI = 5;
         CI = 6;
 
-        parties = {{[],[]}, {AI,AO}, {BI,BO}, {CI,CO}, {[],[]}};
+        parties = {{[]}, {AI,AO}, {BI,BO}, {CI,CO}, {[]}};
 
         W = zeros(d,d);
         for a = 0:1
@@ -57,7 +57,7 @@ function [W, dims, parties] = Lugano_process(purification)
         CI = 12;
         F = [7,8,9];
 
-        parties = {{[],P}, {AI,AO}, {BI,BO}, {CI,CO}, {F,[]}};
+        parties = {{P}, {AI,AO}, {BI,BO}, {CI,CO}, {F}};
 
         w = zeros(d,1);
         for a = 0:1

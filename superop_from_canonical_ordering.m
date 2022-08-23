@@ -32,10 +32,11 @@ function Wr = superop_from_canonical_ordering(Wr_canonical,dims,parties)
     % We just apply the inverse permutation of the systems specified by dim to the
     % order given by parties
     Wr = cell(1,R);
-    perm = [];
-    for n = 1:N+2
+    perm = [parties{1}{1}];
+    for n = 2:N+1
        perm = [perm, parties{n}{1}, parties{n}{2}]; 
     end
+    perm = [perm, parties{N+2}{1}];
     assert(length(perm) == length(dims), 'Incompatibility between dimensions and parties.');
     for i = 1:R
         % Now we use the inverse permutation

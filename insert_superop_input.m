@@ -18,7 +18,7 @@ function [W_new, dims_new, parties_new] = insert_superop_input(W,dims,parties,rh
     end
     R = length(W); % number of superinstrument elements
 
-    P = parties{1}{2};
+    P = parties{1}{1};
     assert(length(P_sys) <= length(P), 'Psys should specify which systems in P state to be inserted in.');
    
     d = prod(dims);
@@ -39,10 +39,10 @@ function [W_new, dims_new, parties_new] = insert_superop_input(W,dims,parties,rh
     dims_new(P(P_sys)) = [];
     
     parties_new = parties;
-    parties_new{1}{2}(P_sys) = [];
+    parties_new{1}{1}(P_sys) = [];
     % Need to readjust the space labels
     for k = 1:length(parties_new)
-        for j = 1:2
+        for j = 1:length(parties_new{k})
            for i = 1:length(parties_new{k}{j})
                x = parties_new{k}{j}(i);
                parties_new{k}{j}(i) = x - sum(x > P(P_sys));

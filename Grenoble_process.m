@@ -62,7 +62,7 @@ function [W, dims, parties] = Grenoble_process(V1,V2,V3,V4,V5,V6,trace_F,input_s
     Fc = 11;
     F = [Ft,Falpha,Fc]; 
     
-    parties = {{[],P}, {AI,AO}, {BI,BO}, {CI,CO}, {F,[]}};
+    parties = {{P}, {AI,AO}, {BI,BO}, {CI,CO}, {F}};
 
 	V1_CJ = pure_CJ(V1);
 	V2_CJ = pure_CJ(V2);

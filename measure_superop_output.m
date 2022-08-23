@@ -52,7 +52,7 @@ function [Wr_new, dims_new, parties_new] = measure_superop_output(Wr,dims,partie
     % Need to readjust the space labels
     % If spaces are give in same order as dim, this shouldn't do anything
     for k = 1:length(parties_new)
-        for j = 1:2
+        for j = 1:length(parties_new{k})
            for i = 1:length(parties_new{k}{j})
                x = parties_new{k}{j}(i);
                parties_new{k}{j}(i) = x - sum(x > F(F_sys));

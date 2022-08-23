@@ -27,8 +27,8 @@ function [W,dims,parties] = quantum_switch(N,d_t,trace_F_t,input_state)
     d_C = factorial(N);
     dims = [d_C, d_t*ones(1,2*N+2), d_C];
     parties = cell(1,N+2);
-    parties{1} = {[],[1,2]}; % P = P_c P_t
-    parties{end} = {[2*N+3, 2*N+4],[]}; % F = F_t F_c
+    parties{1} = {[1,2]}; % P = P_c P_t
+    parties{end} = {[2*N+3, 2*N+4]}; % F = F_t F_c
     for i = 1:N
         parties{i+1} = {2*i+1, 2*i+2};
     end

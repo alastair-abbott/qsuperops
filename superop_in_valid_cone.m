@@ -20,7 +20,7 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
 
     % First put Wr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
-    if exist('parties','var')
+    if exist('parties','var') && ~isempty(parties)
         [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims, parties);
     else
         [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims);
@@ -60,10 +60,10 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
     switch N
         case 1
             %%
-            P = parties{1}{2};
-            AI = parties{2}{1};
-            AO = parties{2}{2};
-            F = parties{3}{1};
+            P = 1;
+            AI = 2;
+            AO = 3;
+            F = 4;
             
             % Project W onto the space of valid processes
             Wproj = W - (tr_replace(W,F,dims) - tr_replace(W,[AO,F],dims)); % (1-AO)F
@@ -71,14 +71,14 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
               
         case 2
             %%
-            P = parties{1}{2};
-            AI = parties{2}{1};
-            AO = parties{2}{2};
+            P = 1;
+            AI = 2;
+            AO = 3;
             A = [AI, AO];
-            BI = parties{3}{1};
-            BO = parties{3}{2};
+            BI = 4;
+            BO = 5;
             B = [BI, BO];
-            F = parties{4}{1};
+            F = 6;
             
             % Project W onto the space of valid processes
             Wproj = W - (tr_replace(W,[B,F],dims) - tr_replace(W,[AO,B,F],dims)); % (1-AO)BF
@@ -89,17 +89,17 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
            
         case 3
             %%
-            P = parties{1}{2};
-            AI = parties{2}{1};
-            AO = parties{2}{2};
+            P = 1;
+            AI = 2;
+            AO = 3;
             A = [AI, AO];
-            BI = parties{3}{1};
-            BO = parties{3}{2};
+            BI = 4;
+            BO = 5;
             B = [BI, BO];
-            CI = parties{4}{1};
-            CO = parties{4}{2};
+            CI = 6;
+            CO = 7;
             C = [CI, CO];
-            F = parties{5}{1};
+            F = 8;
             
             Wproj = W - (tr_replace(W,[B,C,F],dims) - tr_replace(W,[AO,B,C,F],dims)); % (1-AO)BCF
             Wproj = Wproj - (tr_replace(Wproj,[A,C,F],dims) - tr_replace(Wproj,[A,BO,C,F],dims)); % (1-BO)ACF
@@ -120,20 +120,20 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
             
         case 4
             %%
-            P = parties{1}{2};
-            AI = parties{2}{1};
-            AO = parties{2}{2};
+            P = 1;
+            AI = 2;
+            AO = 3;
             A = [AI, AO];
-            BI = parties{3}{1};
-            BO = parties{3}{2};
+            BI = 4;
+            BO = 5;
             B = [BI, BO];
-            CI = parties{4}{1};
-            CO = parties{4}{2};
+            CI = 6;
+            CO = 7;
             C = [CI, CO];
-            DI = parties{5}{1};
-            DO = parties{5}{2};
+            DI = 8;
+            DO = 9;
             D = [DI, DO];
-            F = parties{6}{1};
+            F = 10;
             
             Wproj = W - (tr_replace(W,[B,C,D,F],dims) - tr_replace(W,[AO,B,C,D,F],dims)); % (1-AO)BCDF
             Wproj = Wproj - (tr_replace(Wproj,[A,C,D,F],dims) - tr_replace(Wproj,[A,BO,C,D,F],dims)); % (1-BO)ACDF
