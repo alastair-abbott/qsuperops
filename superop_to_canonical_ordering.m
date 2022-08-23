@@ -47,12 +47,20 @@ function [Wr_canonical,dims_canonical,parties_canonical] = superop_to_canonical_
     dims_canonical = zeros(1,2*N+2);
     parties_canonical = cell(1,N+2);
     
+    % Catch case where P is empty by accident
+    if isempty(parties{1})
+        parties{1} = {[]};
+    end
     dims_canonical(1) = prod(dims(parties{1}{1}));
+
     parties_canonical{1} = {1};
     for n = 1:N
         dims_canonical(2*n) = prod(dims(parties{n+1}{1}));
         dims_canonical(2*n+1) = prod(dims(parties{n+1}{2}));
         parties_canonical{n+1} = {2*n,2*n+1};
+    end
+    if isempty(parties{N+2})
+        parties{N+2} = {};
     end
     dims_canonical(end) = prod(dims(parties{N+2}{1}));
     parties_canonical{end} = {2*N+2};
