@@ -17,7 +17,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
     %% Process the input
     % First put Wr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
-    if exist('parties_raw','var') && ~isempty(parties)
+    if exist('parties_raw','var') && ~isempty(parties_raw)
         [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw, parties_raw);
     else
         [Wr, dims, parties] = superop_to_canonical_ordering(Wr, dims_raw);
@@ -83,7 +83,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
             disp('TODO');
         case 'QCFO'
             % disp('Calculating the random robustness witness wrt class QC-FO');
-            disp('TODO');
+            constr = superop_in_QCFO_witness_cone(Sr,dims,parties);
         case 'CONVQCFO'
             % disp('Calculating the random robustness witness wrt class conv(QC-FO)');
             disp('TODO');
