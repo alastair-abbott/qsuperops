@@ -1,10 +1,9 @@
-function cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
-%superop_in_QCFO_witness_cone checks whether a set of operators is in the dual cone of QC-FOs (fixed order processes)
-%   cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
+function cone_constraints = superop_in_QCPAR_witness_cone(Sr, dims, parties)
+%superop_in_QCPAR_witness_cone checks whether a set of operators is in the dual cone of QC-PARs (parallel processes)
+%   cone_constraints = superop_in_QCPAR_witness_cone(Sr, dims, parties)
 %   Sr can be either a witness or a set of witness elements
 %   If Sr is an sdpvar and cone membership not trivially true/false, this
-%   returns the yalmip constraints for Sr to be in the dual cone of valid Quantum Circuits with Fixed-Order operations
-%   The order is assumed to be that in which the parties are specified
+%   returns the yalmip constraints for Sr to be in the dual cone of valid Quantum Circuits with parallel operations
 %   Note: this doesn't check/enforce the normalisation of the superoperator
 %   
 %   Formulation based on: J. Wechs, H. Dourdent, A. A. Abbott, C. Branciard, PRX Quantum 2, 030335 (2021)
@@ -12,7 +11,7 @@ function cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
 %
 % Requires QETLAB for PermuteSystems, PartialTrace
 
-% Written by Alastair Abbott (2022), last modified 29 August 2022
+% Written by Alastair Abbott (2022), last modified 30 August 2022
 
     % First put Sr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
@@ -32,30 +31,32 @@ function cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
 
     d = prod(dims);
 
-    %% We do this generically for arbitrary N
+    %% For parallel circuits it's easy to do for arbitrary N
+    % In canonical ordering, input spaces are 2,4,... and output 3,5,...
 
     cone_constraints = [];
 
+    % All input and output spaces
     P = 1;
-    d_P = dims(P);
+    AO = 3:2:(2*N+1);
+    F = 2*N + 2;
 
-    S_k1kN = sdpvar(d,d,'hermitian','complex');
+    d_P = prod(dims(P));
+
+    S = sdpvar(d,d,'hermitian','complex'); % the fixed part of the witness elements
 
     % Define the PSD parts of the witness
     T_r = cell(1,R);
     for r = 1:R
-        T_r{r} = Sr{r} - S_k1kN;
+        T_r{r} = Sr{r} - S;
         cone_constraints = [cone_constraints, T_r{r} >= 0];
     end
 
-    % Now we check that S_k1kN is in the right space
-    S_proj = S_k1kN;
-    for n = N:-1:1
-        S_proj = S_proj - (tr_replace(S_proj,(2*n+2):(2*N+2),dims) - tr_replace(S_proj,(2*n+1):(2*N+2),dims));
-    end
+    % Now we check that S is in the right space
+    S_proj = S - (tr_replace(S,F,dims) - tr_replace(S,[AO,F],dims));
 
     if d_P ~= 1
-        S_proj = S_proj - (tr_replace(S_proj,2:(2*N+2),dims) - tr_replace(S_proj,1:(2*N+2),dims));
+        S_proj = S_proj - (tr_replace(S_proj,2:F,dims) - tr_replace(S_proj,1:F,dims));
     end
 
     cone_constraints = [cone_constraints, S_proj == 0];
