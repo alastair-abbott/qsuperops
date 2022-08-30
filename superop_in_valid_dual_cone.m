@@ -43,8 +43,8 @@ function cone_constraints = superop_in_valid_dual_cone(Sr, dims, parties, tol)
     T_r = cell(1,R);
     for r = 1:R
         T_r{r} = Sr{r} - Sv;
-        constraints_yalmip = [constraints_yalmip, T_r{r} >= 0];
     end
+    constraints_yalmip = [constraints_yalmip, superop_in_PSD_cone(T_r)];
 
     %% Then the specific constraints on Sv for each N
 

@@ -48,19 +48,18 @@ function cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties)
             
             T_PAF = cell(1,R);
             T_P = cell(1,R);
-            for i = 1:R
+            for r = 1:R
                 % %% Full versions of constraints to aid readability, before eliminating equality constraints
-                % T_PAF{i} = sdpvar(d,d,'hermitian','complex');
+                % T_PAF{r} = sdpvar(d,d,'hermitian','complex');
                 %
-                % T_P{i} = T_PAF{i} + S_PAF;
+                % T_P{r} = T_PAF{r} + S_PAF;
                 %
-                % constr = [constr, Sr{i} == T_P{i} + S_P];
+                % constr = [constr, Sr{r} == T_P{r} + S_P];
                 
-                T_P{i} = Sr{i} - S_P;
-                T_PAF{i} = T_P{i} - S_PAF;
-                
-                constr = [constr, T_PAF{i} >= 0];
+                T_P{r} = Sr{r} - S_P;
+                T_PAF{r} = T_P{r} - S_PAF;
             end
+            constr = [constr, superop_in_PSD_cone(T_PAF)];
             
             S_PAF_proj = S_PAF - (tr_replace(S_PAF,F,dims) - tr_replace(S_PAF,[AO,F],dims));
             
@@ -92,22 +91,21 @@ function cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties)
             T_PABF = cell(1,R);
             T_PBAF = cell(1,R);
             T_P = cell(1,R);
-            for i = 1:R
+            for r = 1:R
                 % %% Full versions of constraints to aid readability, before eliminating equality constraints
-                % T_PABF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBAF{i} = sdpvar(d,d,'hermitian','complex');
+                % T_PABF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBAF{r} = sdpvar(d,d,'hermitian','complex');
                 %
-                % T_P{i} = T_PABF{i} + S_PABF;
-                % constr = [constr, T_P{i} == T_PBAF{i} + S_PBAF];
+                % T_P{r} = T_PABF{r} + S_PABF;
+                % constr = [constr, T_P{r} == T_PBAF{r} + S_PBAF];
                 %
-                % constr = [constr, Sr{i} == T_P{i} + S_P];
+                % constr = [constr, Sr{r} == T_P{r} + S_P];
                 
-                T_P{i} = Sr{i} - S_P;
-                T_PABF{i} = T_P{i} - S_PABF;
-                T_PBAF{i} = T_P{i} - S_PBAF;
-                
-                constr = [constr, T_PABF{i} >= 0, T_PBAF{i} >= 0];
+                T_P{r} = Sr{r} - S_P;
+                T_PABF{r} = T_P{r} - S_PABF;
+                T_PBAF{r} = T_P{r} - S_PBAF;
             end
+            constr = [constr, superop_in_PSD_cone(T_PABF), superop_in_PSD_cone(T_PBAF)];
             
             S_PABF_proj = S_PABF - (tr_replace(S_PABF,F,dims) - tr_replace(S_PABF,[BO,F],dims));
             S_PABF_proj = S_PABF_proj - (tr_replace(S_PABF_proj,[BI,BO,F],dims) - tr_replace(S_PABF_proj,[AO,BI,BO,F],dims));
@@ -158,44 +156,45 @@ function cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties)
             T_PB = cell(1,R);
             T_PC = cell(1,R);
             T_P = cell(1,R);
-            for i = 1:R
+            for r = 1:R
                 % %% Full versions of constraints to aid readability, before eliminating equality constraints
-                % T_PABCF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PACBF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBACF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBCAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCABF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCBAF{i} = sdpvar(d,d,'hermitian','complex');
+                % T_PABCF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PACBF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBACF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBCAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCABF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCBAF{r} = sdpvar(d,d,'hermitian','complex');
                 %
-                % T_PA{i} = T_PABCF{i} + S_PABCF;
-                % constr = [constr, T_PA{i} == T_PACBF{i} + S_PACBF];
-                % T_PB{i} = T_PBACF{i} + S_PBACF;
-                % constr = [constr, T_PB{i} == T_PBCAF{i} + S_PBCAF];
-                % T_PC{i} = T_PCABF{i} + S_PCABF;
-                % constr = [constr, T_PC{i} == T_PCBAF{i} + S_PCBAF];
+                % T_PA{r} = T_PABCF{r} + S_PABCF;
+                % constr = [constr, T_PA{r} == T_PACBF{r} + S_PACBF];
+                % T_PB{r} = T_PBACF{r} + S_PBACF;
+                % constr = [constr, T_PB{r} == T_PBCAF{r} + S_PBCAF];
+                % T_PC{r} = T_PCABF{r} + S_PCABF;
+                % constr = [constr, T_PC{r} == T_PCBAF{r} + S_PCBAF];
                 %
-                % T_P{i} = T_PA{i} + S_PA;
-                % constr = [constr, T_P{i} == T_PB{i} + S_PB, T_P{i} == T_PC{i} + S_PC];
+                % T_P{r} = T_PA{r} + S_PA;
+                % constr = [constr, T_P{r} == T_PB{r} + S_PB, T_P{r} == T_PC{r} + S_PC];
                 %
-                % constr = [constr, Sr{i} == T_P{i} + S_P];
+                % constr = [constr, Sr{r} == T_P{r} + S_P];
                 
-                T_P{i} = Sr{i} - S_P;
+                T_P{r} = Sr{r} - S_P;
                 
-                T_PA{i} = T_P{i} - S_PA;
-                T_PB{i} = T_P{i} - S_PB;
-                T_PC{i} = T_P{i} - S_PC;
+                T_PA{r} = T_P{r} - S_PA;
+                T_PB{r} = T_P{r} - S_PB;
+                T_PC{r} = T_P{r} - S_PC;
                 
-                T_PABCF{i} = T_PA{i} - S_PABCF;
-                T_PACBF{i} = T_PA{i} - S_PACBF;
+                T_PABCF{r} = T_PA{r} - S_PABCF;
+                T_PACBF{r} = T_PA{r} - S_PACBF;
 
-                T_PBACF{i} = T_PB{i} - S_PBACF;
-                T_PBCAF{i} = T_PB{i} - S_PBCAF;
+                T_PBACF{r} = T_PB{r} - S_PBACF;
+                T_PBCAF{r} = T_PB{r} - S_PBCAF;
                 
-                T_PCABF{i} = T_PC{i} - S_PCABF;
-                T_PCBAF{i} = T_PC{i} - S_PCBAF; 
-                
-                constr = [constr, T_PABCF{i} >= 0, T_PACBF{i} >= 0, T_PBACF{i} >= 0, T_PBCAF{i} >= 0, T_PCABF{i} >= 0, T_PCBAF{i} >= 0];
+                T_PCABF{r} = T_PC{r} - S_PCABF;
+                T_PCBAF{r} = T_PC{r} - S_PCBAF; 
             end
+            constr = [constr, superop_in_PSD_cone(T_PABCF), superop_in_PSD_cone(T_PACBF),...
+                              superop_in_PSD_cone(T_PBACF), superop_in_PSD_cone(T_PBCAF),...
+                              superop_in_PSD_cone(T_PCABF), superop_in_PSD_cone(T_PCBAF)];
             
             S_PABCF_proj = S_PABCF - ( tr_replace(S_PABCF,F,dims) - tr_replace(S_PABCF,[CO,F],dims) );
             S_PABCF_proj = S_PABCF_proj - ( tr_replace(S_PABCF_proj,[CI,CO,F],dims) - tr_replace(S_PABCF_proj,[BO,CI,CO,F],dims) );
@@ -323,128 +322,129 @@ function cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties)
             T_PC = cell(1,R);
             T_PD = cell(1,R);
             T_P = cell(1,R);
-            for i = 1:R
+            for r = 1:R
                 % %% Full versions of constraints to aid readability, before eliminating equality constraints
-                % T_PABCDF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PABDCF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PACBDF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PACDBF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PADBCF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PADCBF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBACDF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBADCF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBCADF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBCDAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBDACF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PBDCAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCABDF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCADBF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCBADF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCBDAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCDABF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PCDBAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDABCF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDACBF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDBACF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDBCAF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDCABF{i} = sdpvar(d,d,'hermitian','complex');
-                % T_PDCBAF{i} = sdpvar(d,d,'hermitian','complex');
+                % T_PABCDF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PABDCF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PACBDF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PACDBF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PADBCF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PADCBF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBACDF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBADCF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBCADF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBCDAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBDACF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PBDCAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCABDF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCADBF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCBADF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCBDAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCDABF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PCDBAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDABCF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDACBF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDBACF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDBCAF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDCABF{r} = sdpvar(d,d,'hermitian','complex');
+                % T_PDCBAF{r} = sdpvar(d,d,'hermitian','complex');
                 %
-                % T_PAB{i} = T_PABCDF{i} + S_PABCDF;
-                % constr = [constr, T_PAB{i} == T_PABDCF{i} + S_PABDCF];
-                % T_PAC{i} = T_PACBDF{i} + S_PACBDF;
-                % constr = [constr, T_PAC{i} == T_PACDBF{i} + S_PACDBF];
-                % T_PAD{i} = T_PADBCF{i} + S_PADBCF;
-                % constr = [constr, T_PAD{i} == T_PADCBF{i} + S_PADCBF];
-                % T_PBA{i} = T_PBACDF{i} + S_PBACDF;
-                % constr = [constr, T_PBA{i} == T_PBADCF{i} + S_PBADCF];
-                % T_PBC{i} = T_PBCADF{i} + S_PBCADF;
-                % constr = [constr, T_PBC{i} == T_PBCDAF{i} + S_PBCDAF];
-                % T_PBD{i} = T_PBDACF{i} + S_PBDACF;
-                % constr = [constr, T_PBD{i} == T_PBDCAF{i} + S_PBDCAF];
-                % T_PCA{i} = T_PCABDF{i} + S_PCABDF;
-                % constr = [constr, T_PCA{i} == T_PCADBF{i} + S_PCADBF];
-                % T_PCB{i} = T_PCBADF{i} + S_PCBADF;
-                % constr = [constr, T_PCB{i} == T_PCBDAF{i} + S_PCBDAF];
-                % T_PCD{i} = T_PCDABF{i} + S_PCDABF;
-                % constr = [constr, T_PCD{i} == T_PCDBAF{i} + S_PCDBAF];
-                % T_PDA{i} = T_PDABCF{i} + S_PDABCF;
-                % constr = [constr, T_PDA{i} == T_PDACBF{i} + S_PDACBF];
-                % T_PDB{i} = T_PDBACF{i} + S_PDBACF;
-                % constr = [constr, T_PDB{i} == T_PDBCAF{i} + S_PDBCAF];
-                % T_PDC{i} = T_PDCABF{i} + S_PDCABF;
-                % constr = [constr, T_PDC{i} == T_PDCBAF{i} + S_PDCBAF];
+                % T_PAB{r} = T_PABCDF{r} + S_PABCDF;
+                % constr = [constr, T_PAB{r} == T_PABDCF{r} + S_PABDCF];
+                % T_PAC{r} = T_PACBDF{r} + S_PACBDF;
+                % constr = [constr, T_PAC{r} == T_PACDBF{r} + S_PACDBF];
+                % T_PAD{r} = T_PADBCF{r} + S_PADBCF;
+                % constr = [constr, T_PAD{r} == T_PADCBF{r} + S_PADCBF];
+                % T_PBA{r} = T_PBACDF{r} + S_PBACDF;
+                % constr = [constr, T_PBA{r} == T_PBADCF{r} + S_PBADCF];
+                % T_PBC{r} = T_PBCADF{r} + S_PBCADF;
+                % constr = [constr, T_PBC{r} == T_PBCDAF{r} + S_PBCDAF];
+                % T_PBD{r} = T_PBDACF{r} + S_PBDACF;
+                % constr = [constr, T_PBD{r} == T_PBDCAF{r} + S_PBDCAF];
+                % T_PCA{r} = T_PCABDF{r} + S_PCABDF;
+                % constr = [constr, T_PCA{r} == T_PCADBF{r} + S_PCADBF];
+                % T_PCB{r} = T_PCBADF{r} + S_PCBADF;
+                % constr = [constr, T_PCB{r} == T_PCBDAF{r} + S_PCBDAF];
+                % T_PCD{r} = T_PCDABF{r} + S_PCDABF;
+                % constr = [constr, T_PCD{r} == T_PCDBAF{r} + S_PCDBAF];
+                % T_PDA{r} = T_PDABCF{r} + S_PDABCF;
+                % constr = [constr, T_PDA{r} == T_PDACBF{r} + S_PDACBF];
+                % T_PDB{r} = T_PDBACF{r} + S_PDBACF;
+                % constr = [constr, T_PDB{r} == T_PDBCAF{r} + S_PDBCAF];
+                % T_PDC{r} = T_PDCABF{r} + S_PDCABF;
+                % constr = [constr, T_PDC{r} == T_PDCBAF{r} + S_PDCBAF];
                 %
-                % T_PA{i} = T_PAB{i} + S_PAB;
-                % constr = [constr, T_PA{i} == T_PAC{i} + S_PAC, T_PA{i} == T_PAD{i} + S_PAD];
-                % T_PB{i} = T_PBA{i} + S_PBA;
-                % constr = [constr, T_PB{i} == T_PBC{i} + S_PBC, T_PB{i} == T_PBD{i} + S_PBD];
-                % T_PC{i} = T_PCA{i} + S_PCA;
-                % constr = [constr, T_PC{i} == T_PCB{i} + S_PCB, T_PC{i} == T_PCD{i} + S_PCD];
-                % T_PD{i} = T_PDA{i} + S_PDA;
-                % constr = [constr, T_PD{i} == T_PDB{i} + S_PDB, T_PD{i} == T_PDC{i} + S_PDC];
+                % T_PA{r} = T_PAB{r} + S_PAB;
+                % constr = [constr, T_PA{r} == T_PAC{r} + S_PAC, T_PA{r} == T_PAD{r} + S_PAD];
+                % T_PB{r} = T_PBA{r} + S_PBA;
+                % constr = [constr, T_PB{r} == T_PBC{r} + S_PBC, T_PB{r} == T_PBD{r} + S_PBD];
+                % T_PC{r} = T_PCA{r} + S_PCA;
+                % constr = [constr, T_PC{r} == T_PCB{r} + S_PCB, T_PC{r} == T_PCD{r} + S_PCD];
+                % T_PD{r} = T_PDA{r} + S_PDA;
+                % constr = [constr, T_PD{r} == T_PDB{r} + S_PDB, T_PD{r} == T_PDC{r} + S_PDC];
                 %
-                % T_P{i} = T_PA{i} + S_PA;
-                % constr = [constr, T_P{i} == T_PB{i} + S_PB, T_P{i} == T_PC{i} + S_PC, T_P{i} == T_PD{i} + S_PD];
+                % T_P{r} = T_PA{r} + S_PA;
+                % constr = [constr, T_P{r} == T_PB{r} + S_PB, T_P{r} == T_PC{r} + S_PC, T_P{r} == T_PD{r} + S_PD];
                 %
-                % constr = [constr, Sr{i} == T_P{i} + S_P];
+                % constr = [constr, Sr{r} == T_P{r} + S_P];
                 
-                T_P{i} = Sr{i} - S_P;
+                T_P{r} = Sr{r} - S_P;
                 
-                T_PA{i} = T_P{i} - S_PA;
-                T_PB{i} = T_P{i} - S_PB;
-                T_PC{i} = T_P{i} - S_PC;
-                T_PD{i} = T_P{i} - S_PD;
+                T_PA{r} = T_P{r} - S_PA;
+                T_PB{r} = T_P{r} - S_PB;
+                T_PC{r} = T_P{r} - S_PC;
+                T_PD{r} = T_P{r} - S_PD;
                 
-                T_PAB{i} = T_PA{i} - S_PAB;
-                T_PAC{i} = T_PA{i} - S_PAC;
-                T_PAD{i} = T_PA{i} - S_PAD;
+                T_PAB{r} = T_PA{r} - S_PAB;
+                T_PAC{r} = T_PA{r} - S_PAC;
+                T_PAD{r} = T_PA{r} - S_PAD;
                 
-                T_PBA{i} = T_PB{i} - S_PBA;
-                T_PBC{i} = T_PB{i} - S_PBC;
-                T_PBD{i} = T_PB{i} - S_PBD;
+                T_PBA{r} = T_PB{r} - S_PBA;
+                T_PBC{r} = T_PB{r} - S_PBC;
+                T_PBD{r} = T_PB{r} - S_PBD;
                 
-                T_PCA{i} = T_PC{i} - S_PCA;
-                T_PCB{i} = T_PC{i} - S_PCB;
-                T_PCD{i} = T_PC{i} - S_PCD;
+                T_PCA{r} = T_PC{r} - S_PCA;
+                T_PCB{r} = T_PC{r} - S_PCB;
+                T_PCD{r} = T_PC{r} - S_PCD;
                 
-                T_PDA{i} = T_PD{i} - S_PDA;
-                T_PDB{i} = T_PD{i} - S_PDB;
-                T_PDC{i} = T_PD{i} - S_PDC;
+                T_PDA{r} = T_PD{r} - S_PDA;
+                T_PDB{r} = T_PD{r} - S_PDB;
+                T_PDC{r} = T_PD{r} - S_PDC;
                 
-                T_PABCDF{i} = T_PAB{i} - S_PABCDF;
-                T_PABDCF{i} = T_PAB{i} - S_PABDCF;
-                T_PACBDF{i} = T_PAC{i} - S_PACBDF;
-                T_PACDBF{i} = T_PAC{i} - S_PACDBF;
-                T_PADBCF{i} = T_PAD{i} - S_PADBCF;
-                T_PADCBF{i} = T_PAD{i} - S_PADCBF;
+                T_PABCDF{r} = T_PAB{r} - S_PABCDF;
+                T_PABDCF{r} = T_PAB{r} - S_PABDCF;
+                T_PACBDF{r} = T_PAC{r} - S_PACBDF;
+                T_PACDBF{r} = T_PAC{r} - S_PACDBF;
+                T_PADBCF{r} = T_PAD{r} - S_PADBCF;
+                T_PADCBF{r} = T_PAD{r} - S_PADCBF;
                 
-                T_PBACDF{i} = T_PBA{i} - S_PBACDF;
-                T_PBADCF{i} = T_PBA{i} - S_PBADCF;
-                T_PBCADF{i} = T_PBC{i} - S_PBCADF;
-                T_PBCDAF{i} = T_PBC{i} - S_PBCDAF;
-                T_PBDACF{i} = T_PBD{i} - S_PBDACF;
-                T_PBDCAF{i} = T_PBD{i} - S_PBDCAF;
+                T_PBACDF{r} = T_PBA{r} - S_PBACDF;
+                T_PBADCF{r} = T_PBA{r} - S_PBADCF;
+                T_PBCADF{r} = T_PBC{r} - S_PBCADF;
+                T_PBCDAF{r} = T_PBC{r} - S_PBCDAF;
+                T_PBDACF{r} = T_PBD{r} - S_PBDACF;
+                T_PBDCAF{r} = T_PBD{r} - S_PBDCAF;
                 
-                T_PCABDF{i} = T_PCA{i} - S_PCABDF;
-                T_PCADBF{i} = T_PCA{i} - S_PCADBF;
-                T_PCBADF{i} = T_PCB{i} - S_PCBADF;
-                T_PCBDAF{i} = T_PCB{i} - S_PCBDAF; 
-                T_PCDABF{i} = T_PCD{i} - S_PCDABF;
-                T_PCDBAF{i} = T_PCD{i} - S_PCDBAF;
+                T_PCABDF{r} = T_PCA{r} - S_PCABDF;
+                T_PCADBF{r} = T_PCA{r} - S_PCADBF;
+                T_PCBADF{r} = T_PCB{r} - S_PCBADF;
+                T_PCBDAF{r} = T_PCB{r} - S_PCBDAF; 
+                T_PCDABF{r} = T_PCD{r} - S_PCDABF;
+                T_PCDBAF{r} = T_PCD{r} - S_PCDBAF;
 
-                T_PDABCF{i} = T_PDA{i} - S_PDABCF;
-                T_PDACBF{i} = T_PDA{i} - S_PDACBF;
-                T_PDBACF{i} = T_PDB{i} - S_PDBACF;
-                T_PDBCAF{i} = T_PDB{i} - S_PDBCAF;
-                T_PDCABF{i} = T_PDC{i} - S_PDCABF;
-                T_PDCBAF{i} = T_PDC{i} - S_PDCBAF;
-                
-                constr = [constr, T_PABCDF{i} >= 0, T_PABDCF{i} >= 0, T_PACBDF{i} >= 0, T_PACDBF{i} >= 0, T_PADBCF{i} >= 0, T_PADCBF{i} >= 0, ...
-                                  T_PBACDF{i} >= 0, T_PBADCF{i} >= 0, T_PBCADF{i} >= 0, T_PBCDAF{i} >= 0, T_PBDACF{i} >= 0, T_PBDCAF{i} >= 0, ...
-                                  T_PCABDF{i} >= 0, T_PCADBF{i} >= 0, T_PCBADF{i} >= 0, T_PCBDAF{i} >= 0, T_PCDABF{i} >= 0, T_PCDBAF{i} >= 0, ...
-                                  T_PDABCF{i} >= 0, T_PDACBF{i} >= 0, T_PDBACF{i} >= 0, T_PDBCAF{i} >= 0, T_PDCABF{i} >= 0, T_PDCBAF{i} >= 0, ];
+                T_PDABCF{r} = T_PDA{r} - S_PDABCF;
+                T_PDACBF{r} = T_PDA{r} - S_PDACBF;
+                T_PDBACF{r} = T_PDB{r} - S_PDBACF;
+                T_PDBCAF{r} = T_PDB{r} - S_PDBCAF;
+                T_PDCABF{r} = T_PDC{r} - S_PDCABF;
+                T_PDCBAF{r} = T_PDC{r} - S_PDCBAF;
             end
+            constr = [constr, superop_in_PSD_cone(T_PABCDF), superop_in_PSD_cone(T_PABDCF), superop_in_PSD_cone(T_PACBDF), superop_in_PSD_cone(T_PACDBF),...
+                              superop_in_PSD_cone(T_PADBCF), superop_in_PSD_cone(T_PADCBF), superop_in_PSD_cone(T_PBACDF), superop_in_PSD_cone(T_PBADCF),...
+                              superop_in_PSD_cone(T_PBADCF), superop_in_PSD_cone(T_PBCDAF), superop_in_PSD_cone(T_PBDACF), superop_in_PSD_cone(T_PBDCAF),...
+                              superop_in_PSD_cone(T_PCABDF), superop_in_PSD_cone(T_PCADBF), superop_in_PSD_cone(T_PCBADF), superop_in_PSD_cone(T_PCBDAF),...
+                              superop_in_PSD_cone(T_PCDABF), superop_in_PSD_cone(T_PCDBAF), superop_in_PSD_cone(T_PDABCF), superop_in_PSD_cone(T_PDACBF),...
+                              superop_in_PSD_cone(T_PDBACF), superop_in_PSD_cone(T_PDBCAF), superop_in_PSD_cone(T_PDCABF), superop_in_PSD_cone(T_PDCBAF)];
             
             S_PABCDF_proj = S_PABCDF - ( tr_replace(S_PABCDF,F,dims) - tr_replace(S_PABCDF,[DO,F],dims) );
             S_PABCDF_proj = S_PABCDF_proj - ( tr_replace(S_PABCDF_proj,[DI,DO,F],dims) - tr_replace(S_PABCDF_proj,[CO,DI,DO,F],dims) );

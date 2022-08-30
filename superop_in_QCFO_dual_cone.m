@@ -43,8 +43,8 @@ function cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
     T_r = cell(1,R);
     for r = 1:R
         T_r{r} = Sr{r} - S_k1kN;
-        cone_constraints = [cone_constraints, T_r{r} >= 0];
     end
+    cone_constraints = [cone_constraints, superop_in_PSD_cone(T_r)];
 
     % Now we check that S_k1kN is in the right space
     S_proj = S_k1kN;

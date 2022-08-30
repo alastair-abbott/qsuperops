@@ -49,8 +49,8 @@ function cone_constraints = superop_in_QCPAR_dual_cone(Sr, dims, parties)
     T_r = cell(1,R);
     for r = 1:R
         T_r{r} = Sr{r} - S;
-        cone_constraints = [cone_constraints, T_r{r} >= 0];
     end
+    cone_constraints = [cone_constraints, superop_in_PSD_cone(T_r)];
 
     % Now we check that S is in the right space
     S_proj = S - (tr_replace(S,F,dims) - tr_replace(S,[AO,F],dims));
