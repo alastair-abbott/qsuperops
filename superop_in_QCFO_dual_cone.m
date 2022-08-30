@@ -1,6 +1,6 @@
-function cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
-%superop_in_QCFO_witness_cone checks whether a set of operators is in the dual cone of QC-FOs (fixed order processes)
-%   cone_constraints = superop_in_QCFO_witness_cone(Sr, dims, parties)
+function cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
+%superop_in_QCFO_dual_cone checks whether a set of operators is in the dual cone of QC-FOs (fixed order processes)
+%   cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
 %   Sr can be either a witness or a set of witness elements
 %   If Sr is an sdpvar and cone membership not trivially true/false, this
 %   returns the yalmip constraints for Sr to be in the dual cone of valid Quantum Circuits with Fixed-Order operations

@@ -1,6 +1,6 @@
-function cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties)
-%superop_in_convQCFO_witness_cone Yalmip constraints for a set of matrices to be in the cone of witnesses for convex mixtures of QC-FOs
-%   cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties) 
+function cone_constraints = superop_in_convQCFO_dual_cone(Sr, dims, parties)
+%superop_in_convQCFO_dual_cone Yalmip constraints for a set of matrices to be in the cone of witnesses for convex mixtures of QC-FOs
+%   cone_constraints = superop_in_convQCFO_dual_cone(Sr, dims, parties) 
 %   Sr can be either a single witness S, or a superinstrument witness Sr
 %   Returns the yalmip constraints, i.e. for the dual cone
 %
@@ -34,7 +34,7 @@ function cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties)
         case 1
             %% Only one order possible, reuse QCFO code
             
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties)];
         case 2
             %% Recall we now have a conically ordered process and we've grouped the "sub"-spaces
             
@@ -42,8 +42,8 @@ function cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties)
             % We can just reinterpret the parties and check like that
             parties_BAF_permuted = parties([1,3,2,4]);
 
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BAF_permuted)];
 
         case 3
             %% Recall we now have a conically ordered process and we've grouped the "sub"-spaces
@@ -56,12 +56,12 @@ function cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties)
             parties_CABF_permuted = parties([1,4,3,2,5]);
             parties_CBAF_permuted = parties([1,4,2,3,5]);
 
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ACBF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BACF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BCAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CABF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CBAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ACBF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BACF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BCAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CABF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CBAF_permuted)];
             
         case 4
             %% Recall we now have a conically ordered process and we've grouped the "sub"-spaces
@@ -92,30 +92,30 @@ function cone_constraints = superop_in_convQCFO_witness_cone(Sr, dims, parties)
             parties_DCABF_permuted = parties([1,5,4,2,3,6]);
             parties_DCBAF_permuted = parties([1,5,4,3,2,6]);
 
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ABDCF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ACBDF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ACDBF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ADBCF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_ADCBF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BACDF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BADCF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BCADF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BCDAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BDACF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_BDCAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CABDF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CADBF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CBADF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CBDAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CDABF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_CDBAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DABCF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DACBF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DBACF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DBCAF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DCABF_permuted)];
-            constr = [constr, superop_in_QCFO_witness_cone(Sr,dims,parties_DCBAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ABDCF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ACBDF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ACDBF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ADBCF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_ADCBF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BACDF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BADCF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BCADF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BCDAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BDACF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_BDCAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CABDF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CADBF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CBADF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CBDAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CDABF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_CDBAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DABCF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DACBF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DBACF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DBCAF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DCABF_permuted)];
+            constr = [constr, superop_in_QCFO_dual_cone(Sr,dims,parties_DCBAF_permuted)];
             
         otherwise
             error('Currently only implemented up to N=4');

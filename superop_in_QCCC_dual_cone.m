@@ -1,6 +1,6 @@
-function cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties)
-%superop_in_QCCC_witness_cone Yalmip constraints for a set of matrices to be in the cone of witnesses for QC-CCs
-%   cone_constraints = superop_in_QCCC_witness_cone(Sr, dims, parties) 
+function cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties)
+%superop_in_QCCC_dual_cone Yalmip constraints for a set of matrices to be in the cone of witnesses for QC-CCs
+%   cone_constraints = superop_in_QCCC_dual_cone(Sr, dims, parties) 
 %   Sr can be either a single witness S, or a superinstrument witness Sr
 %   Returns the yalmip constraints, i.e. for the dual cone
 %

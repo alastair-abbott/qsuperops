@@ -81,23 +81,23 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
         case 'QCPAR'
             % disp('Calculating the random robustness witness wrt class QC-PAR (Parallel quantum circuits)');
             disp('Warning: calculating witness for QC-PARs is problematic due to nonapplicability of Slater''s theorem');
-            constr = superop_in_QCPAR_witness_cone(Sr,dims,parties);
+            constr = superop_in_QCPAR_dual_cone(Sr,dims,parties);
         case 'QCFO'
             % disp('Calculating the random robustness witness wrt class QC-FO');
             disp('Warning: calculating witness for QC-FOs is problematic due to nonapplicability of Slater''s theorem');
-            constr = superop_in_QCFO_witness_cone(Sr,dims,parties);
+            constr = superop_in_QCFO_dual_cone(Sr,dims,parties);
         case 'CONVQCFO'
             % disp('Calculating the random robustness witness wrt class conv(QC-FO)');
-            disp('TODO');
+            constr = superop_in_convQCFO_dual_cone(Sr,dims,parties);
         case 'QCCC'
             % disp('Calculating the random robustness witness wrt class QC-CC');
-            constr = superop_in_QCCC_witness_cone(Sr,dims,parties);
+            constr = superop_in_QCCC_dual_cone(Sr,dims,parties);
         case 'QCQC'
             % disp('Calculating the random robustness witness wrt class QC-QC');
             disp('TODO');
         otherwise
             disp('Warning, invalid superoperator type specified. Calculating for QC-CCs')
-            constr = superop_in_QCCC_witness_cone(Sr,dims,parties);
+            constr = superop_in_QCCC_dual_cone(Sr,dims,parties);
     end
     disp('');
     
