@@ -80,9 +80,11 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_generalised_robustness_witne
     switch upper(superop_class)
         case 'QCPAR'
             % disp('Calculating the random robustness witness wrt class QC-PAR (Parallel quantum circuits)');
+            disp('Warning: calculating witness for QC-PARs is problematic due to nonapplicability of Slater''s theorem');
             constr = superop_in_QCPAR_witness_cone(Sr,dims,parties);
         case 'QCFO'
             % disp('Calculating the random robustness witness wrt class QC-FO');
+            disp('Warning: calculating witness for QC-FOs is problematic due to nonapplicability of Slater''s theorem');
             constr = superop_in_QCFO_witness_cone(Sr,dims,parties);
 %             constr = [constr, superop_in_valid_cone(Sr,dims,parties)];
         case 'CONVQCFO'
