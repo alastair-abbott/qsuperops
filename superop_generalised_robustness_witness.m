@@ -52,11 +52,9 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_generalised_robustness_witne
     d = prod(dims);
     
     % Note that trivial spaces are explicitly listed as 1D after canonical ordering
-    d_I = prod(dims(2:2:end));
+    d_O = prod(dims(1:2:(end-1)));
     
     %% Setup the witness SDP
-    % White noise process matrix
-    noisyW = (1/d_I)*eye(d);
 
     if witness_from_basis
         % We decompose Sr{i} = \sum_b coeffs(i,b)*witnessBase(:,:,b)
@@ -80,11 +78,9 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_generalised_robustness_witne
     switch upper(superop_class)
         case 'QCPAR'
             % disp('Calculating the random robustness witness wrt class QC-PAR (Parallel quantum circuits)');
-            disp('Warning: calculating witness for QC-PARs is problematic due to nonapplicability of Slater''s theorem');
             constr = superop_in_QCPAR_dual_cone(Sr,dims,parties);
         case 'QCFO'
             % disp('Calculating the random robustness witness wrt class QC-FO');
-            disp('Warning: calculating witness for QC-FOs is problematic due to nonapplicability of Slater''s theorem');
             constr = superop_in_QCFO_dual_cone(Sr,dims,parties);
 %             constr = [constr, superop_in_valid_cone(Sr,dims,parties)];
         case 'CONVQCFO'
@@ -108,25 +104,25 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_generalised_robustness_witne
         if witness_from_basis
            disp('Warning: shouldn''t need to force unitary operations when a good witness basis is provided.'); 
         end
-        for i = 1:R
+        for r = 1:R
             for n = 1:N
-                constr = [constr, tr_replace(Sr{i},2*n,dims) == tr_replace(Sr{i},[2*n,2*n+1],dims)];
-                constr = [constr, tr_replace(Sr{i},2*n+1,dims) == tr_replace(Sr{i},[2*n,2*n+1],dims)];
+                constr = [constr, tr_replace(Sr{r},2*n,dims) == tr_replace(Sr{r},[2*n,2*n+1],dims)];
+                constr = [constr, tr_replace(Sr{r},2*n+1,dims) == tr_replace(Sr{r},[2*n,2*n+1],dims)];
             end
         end
     end
-    
+
     % normalisation condition
-    norm = 0;
-    for i = 1:R
-        norm = norm + 1/R*trace(Sr{i}*noisyW);
+    Sigma_r = cell(1,R);
+    for r = 1:R
+        Sigma_r{r} = eye(d)/d_O - Sr{r};
     end
-    constr = [constr, norm == 1];
+    constr = [constr, superop_in_valid_dual_cone(Sigma_r,dims,parties)];
     
     % objective: tr(S*W)
     objective = 0;
-    for i = 1:R
-        objective = objective + trace(Sr{i}*Wr{i});
+    for r = 1:R
+        objective = objective + trace(Sr{r}*Wr{r});
     end
     
     %% Solve the SDP
