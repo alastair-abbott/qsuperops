@@ -4,6 +4,7 @@ function [Wr_new, dims_new, parties_new] = measure_superop_output(Wr,dims,partie
 %
 %   Applies the POVM M to the systems F_sys of the superinstrument/operator Wr, generating a new
 %   superinstrrument. 
+%   M is an array of size dxdxR, where each M(:,:,r) is an element of the POVM and sum(M,3) = eye(d)
 %
 % Require QETLAB for PermuteSystems, PartialTrace
 
