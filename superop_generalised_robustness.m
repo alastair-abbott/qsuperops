@@ -113,6 +113,9 @@ function [r_opt, yalmip_out] = superop_generalised_robustness(Wr,dims,parties,su
         yalmip_options = sdpsettings();
     end
     yalmip_out = optimize(constr, r_g, yalmip_options);
+    if yalmip_out.problem == true
+        disp(['WARNING: Yalmip encountered a problem ("', yalmip_out.info ,'"), result may be unreliable']);
+    end
     
     r_opt = value(r_g);
     

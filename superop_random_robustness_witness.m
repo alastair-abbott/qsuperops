@@ -135,6 +135,9 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
         yalmip_options = sdpsettings();
     end
     yalmip_out = optimize(constr, real(objective), yalmip_options);
+    if yalmip_out.problem == true
+        disp(['WARNING: Yalmip encountered a problem ("', yalmip_out.info ,'"), result may be unreliable']);
+    end
     
     if input_is_process_matrix
         Sr_opt = value(Sr{1});
