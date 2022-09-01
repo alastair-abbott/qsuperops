@@ -73,7 +73,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
             % disp('Calculating the random robustness wrt class conv(QC-FO)');
             constr = [constr, superop_in_convQCFO_cone(Wr_admixed,dims,parties)];
         case 'QCSUP'
-            % disp('Calculating the random robustness wrt class conv(QC-FO)');
+            % disp('Calculating the random robustness wrt class QCSup');
             constr = [constr, superop_in_QCSup_cone(Wr_admixed,dims,parties)];
         case 'QCCC'
             % disp('Calculating the random robustness wrt class QC-CC');
