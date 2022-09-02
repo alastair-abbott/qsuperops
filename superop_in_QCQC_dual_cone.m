@@ -42,14 +42,18 @@ function cone_constraints = superop_in_QCQC_dual_cone(Sr, dims, parties)
             % Implement this in the dual picture
             F = 2*N+2;
 
-            S_tot = Sr{1};
-            for r = 2:R
-                S_tot = S_tot + Sr{r};
-            end
-            cone_constraints = [cone_constraints, S_tot - tr_replace(S_tot,F,dims) == 0];
+            S_F = sdpvar(d,d,'hermitian','complex');
 
-            [Sr_F, dims_F, parties_F] = trace_superop_output(Sr,dims,parties,1);
-            cone_constraints = [cone_constraints, superop_in_QCCC_dual_cone(Sr_F,dims_F,parties_F)];
+            T_F = cell(1,R);
+            for r = 1:R
+                T_F{r} = Sr{r} - S_F;
+            end
+            cone_constraints = [cone_constraints, superop_in_PSD_cone(T_F)];
+
+            cone_constraints = [cone_constraints, S_F - tr_replace(S_F,F,dims) == 0];
+
+            [S_AB, dims_AB, parties_AB] = trace_superop_output(S_F,dims,parties,1);
+            cone_constraints = [cone_constraints, superop_in_QCCC_dual_cone(S_AB,dims_AB,parties_AB)];
             
         case 3
             %%
