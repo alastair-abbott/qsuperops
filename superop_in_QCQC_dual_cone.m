@@ -6,7 +6,7 @@ function cone_constraints = superop_in_QCQC_dual_cone(Sr, dims, parties)
 %
 % Requires QETLAB for PermuteSystems, PartialTrace
 
-% Written by Alastair Abbott 2022, last modified 30 August 2022
+% Written by Alastair Abbott 2022, last modified 2 September
 
     % First put Sr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2

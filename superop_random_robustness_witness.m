@@ -89,6 +89,9 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
         case 'CONVQCFO'
             % disp('Calculating the random robustness witness wrt class conv(QC-FO)');
             constr = superop_in_convQCFO_dual_cone(Sr,dims,parties);
+        case 'QCSUP'
+            % disp('Calculating the random robustness witness wrt class QC-QC');
+            constr = superop_in_QCSup_dual_cone(Sr,dims,parties);
         case 'QCCC'
             % disp('Calculating the random robustness witness wrt class QC-CC');
             constr = superop_in_QCCC_dual_cone(Sr,dims,parties);
