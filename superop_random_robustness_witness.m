@@ -94,7 +94,7 @@ function [Sr_opt, yalmip_out, coeffs_opt] = superop_random_robustness_witness(Wr
             constr = superop_in_QCCC_dual_cone(Sr,dims,parties);
         case 'QCQC'
             % disp('Calculating the random robustness witness wrt class QC-QC');
-            constr = superop_in_QCQC_dual_cone(Sr,dims,parties);
+            disp('TODO');
         otherwise
             disp('Warning, invalid superoperator type specified. Calculating for QC-CCs')
             constr = superop_in_QCCC_dual_cone(Sr,dims,parties);

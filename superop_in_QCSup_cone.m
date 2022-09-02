@@ -26,14 +26,18 @@ function cone_constraints = superop_in_QCSup_cone(Wr, dims, parties)
     
     %% We can do this for arbitrary N     
 
-    % Trace out F
-    [Wr_reduced, dims_reduced, parties_reduced] = trace_superop_output(Wr,dims,parties,1);
+    % Need every Wr{i} >= 0
+    cone_constraints = superop_in_PSD_cone(Wr);
 
-    if R > 1
-        error('Warning!! Current characterisation only valid for process matrices. Multi-outcome superinstruments characterisation to be confirmed.');
+    W = Wr{1};
+    for r = 2:R
+       W = W + Wr{r}; 
     end
 
-    cone_constraints = superop_in_convQCFO_cone(Wr_reduced, dims_reduced, parties_reduced);
+    % Trace out F
+    [W_reduced, dims_reduced, parties_reduced] = trace_superop_output(W,dims,parties,1);
+
+    cone_constraints = [cone_constraints, superop_in_convQCFO_cone(W_reduced, dims_reduced, parties_reduced)];
 
 end
 
