@@ -9,7 +9,7 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
 %
 % Requires QETLAB for PartialTrace
 
-% Written by Alastair Abbott (2022), last modified 18 August 2022
+% Written by Alastair Abbott (2022), last modified 20 September 2022
 
     %% Setup and process the input
 
@@ -35,11 +35,11 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
     constraints_logical = true;
     constraints_yalmip = true;
 
-    %% Common for all N
-
     R = length(Wr);
     N = length(parties) - 2;
     d = prod(dims);
+
+    %% Cone constraints
 
     % First we check each Wr{r} >= 0
     constraints_temp = superop_in_PSD_cone(Wr,tol);
@@ -55,128 +55,8 @@ function in_valid_cone = superop_in_valid_cone(Wr, dims, parties,tol)
         W = W + Wr{r};
     end
     
-    %% Now the specific constraints for each N seperately
-
-    switch N
-        case 1
-            %%
-            P = 1;
-            AI = 2;
-            AO = 3;
-            F = 4;
-            
-            % Project W onto the space of valid processes
-            Wproj = W - (tr_replace(W,F,dims) - tr_replace(W,[AO,F],dims)); % (1-AO)F
-            Wproj = Wproj - (tr_replace(Wproj,[AI,AO,F],dims) - tr_replace(Wproj,[P,AI,AO,F],dims)); % (1-P)AF
-              
-        case 2
-            %%
-            P = 1;
-            AI = 2;
-            AO = 3;
-            A = [AI, AO];
-            BI = 4;
-            BO = 5;
-            B = [BI, BO];
-            F = 6;
-            
-            % Project W onto the space of valid processes
-            Wproj = W - (tr_replace(W,[B,F],dims) - tr_replace(W,[AO,B,F],dims)); % (1-AO)BF
-            Wproj = Wproj - (tr_replace(Wproj,[A,F],dims) - tr_replace(Wproj,[A,BO,F],dims)); % (1-BO)AF
-            Wproj = Wproj - (tr_replace(Wproj,F,dims) - tr_replace(Wproj,[AO,F],dims) ...
-                             - tr_replace(Wproj,[BO,F],dims) + tr_replace(Wproj,[AO,BO,F],dims)); % (1-AO)(1-BO)F
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[P,A,B,F],dims)); % (1-P)ABF
-           
-        case 3
-            %%
-            P = 1;
-            AI = 2;
-            AO = 3;
-            A = [AI, AO];
-            BI = 4;
-            BO = 5;
-            B = [BI, BO];
-            CI = 6;
-            CO = 7;
-            C = [CI, CO];
-            F = 8;
-            
-            Wproj = W - (tr_replace(W,[B,C,F],dims) - tr_replace(W,[AO,B,C,F],dims)); % (1-AO)BCF
-            Wproj = Wproj - (tr_replace(Wproj,[A,C,F],dims) - tr_replace(Wproj,[A,BO,C,F],dims)); % (1-BO)ACF
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[A,B,CO,F],dims)); % (1-CO)ABF
-            
-            Wproj = Wproj - (tr_replace(Wproj,[C,F],dims) - tr_replace(Wproj,[AO,C,F],dims) ...
-                             - tr_replace(Wproj,[BO,C,F],dims) + tr_replace(Wproj,[AO,BO,C,F],dims)); % (1-AO)(1-BO)CF
-            Wproj = Wproj - (tr_replace(Wproj,[B,F],dims) - tr_replace(Wproj,[AO,B,F],dims) ...
-                             - tr_replace(Wproj,[B,CO,F],dims) + tr_replace(Wproj,[AO,B,CO,F],dims)); % (1-AO)B(1-CO)F
-            Wproj = Wproj - (tr_replace(Wproj,[A,F],dims) - tr_replace(Wproj,[A,BO,F],dims) ...
-                             - tr_replace(Wproj,[A,CO,F],dims) + tr_replace(Wproj,[A,BO,CO,F],dims)); % A(1-BO)(1-CO)F
-            
-            Wproj = Wproj - (tr_replace(Wproj,F,dims) - tr_replace(Wproj,[AO,F],dims) - tr_replace(Wproj,[BO,F],dims) - tr_replace(Wproj,[CO,F],dims) ...
-                             + tr_replace(Wproj,[AO,BO,F],dims) + tr_replace(Wproj,[AO,CO,F],dims) + tr_replace(Wproj,[BO,CO,F],dims) ...
-                             - tr_replace(Wproj,[AO,BO,CO,F],dims)); % (1-AO)(1-BO)(1-CO)F
-            
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,C,F],dims) - tr_replace(Wproj,[P,A,B,C,F],dims)); % (1-P)ABCF
-            
-        case 4
-            %%
-            P = 1;
-            AI = 2;
-            AO = 3;
-            A = [AI, AO];
-            BI = 4;
-            BO = 5;
-            B = [BI, BO];
-            CI = 6;
-            CO = 7;
-            C = [CI, CO];
-            DI = 8;
-            DO = 9;
-            D = [DI, DO];
-            F = 10;
-            
-            Wproj = W - (tr_replace(W,[B,C,D,F],dims) - tr_replace(W,[AO,B,C,D,F],dims)); % (1-AO)BCDF
-            Wproj = Wproj - (tr_replace(Wproj,[A,C,D,F],dims) - tr_replace(Wproj,[A,BO,C,D,F],dims)); % (1-BO)ACDF
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,D,F],dims) - tr_replace(Wproj,[A,B,CO,D,F],dims)); % (1-CO)ABDF
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,C,F],dims) - tr_replace(Wproj,[A,B,C,DO,F],dims)); % (1-DO)ABCF
-            
-            Wproj = Wproj - (tr_replace(Wproj,[C,D,F],dims) - tr_replace(Wproj,[AO,C,D,F],dims) ...
-                             - tr_replace(Wproj,[BO,C,D,F],dims) + tr_replace(Wproj,[AO,BO,C,D,F],dims)); % (1-AO)(1-BO)CDF
-            Wproj = Wproj - (tr_replace(Wproj,[B,D,F],dims) - tr_replace(Wproj,[AO,B,D,F],dims) ...
-                             - tr_replace(Wproj,[B,CO,D,F],dims) + tr_replace(Wproj,[AO,B,CO,D,F],dims)); % (1-AO)B(1-CO)DF
-            Wproj = Wproj - (tr_replace(Wproj,[B,C,F],dims) - tr_replace(Wproj,[AO,B,C,F],dims) ...
-                             - tr_replace(Wproj,[B,C,DO,F],dims) + tr_replace(Wproj,[AO,B,C,DO,F],dims)); % (1-AO)BC(1-DO)F
-            Wproj = Wproj - (tr_replace(Wproj,[A,D,F],dims) - tr_replace(Wproj,[A,BO,D,F],dims) ...
-                             - tr_replace(Wproj,[A,CO,D,F],dims) + tr_replace(Wproj,[A,BO,CO,D,F],dims)); % A(1-BO)(1-CO)DF
-            Wproj = Wproj - (tr_replace(Wproj,[A,C,F],dims) - tr_replace(Wproj,[A,BO,C,F],dims) ...
-                             - tr_replace(Wproj,[A,C,DO,F],dims) + tr_replace(Wproj,[A,BO,C,DO,F],dims)); % A(1-BO)C(1-DO)F
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,F],dims) - tr_replace(Wproj,[A,B,CO,F],dims) ...
-                             - tr_replace(Wproj,[A,B,DO,F],dims) + tr_replace(Wproj,[A,B,CO,D0,F],dims)); % AB(1-CO)(1-DO)F
-            
-            Wproj = Wproj - (tr_replace(Wproj,[D,F],dims) - tr_replace(Wproj,[AO,D,F],dims) - tr_replace(Wproj,[BO,D,F],dims) - tr_replace(Wproj,[CO,D,F],dims) ...
-                             + tr_replace(Wproj,[AO,BO,D,F],dims) + tr_replace(Wproj,[AO,CO,D,F],dims) + tr_replace(Wproj,[BO,CO,D,F],dims) ...
-                             - tr_replace(Wproj,[AO,BO,CO,D,F],dims)); % (1-AO)(1-BO)(1-CO)DF
-            Wproj = Wproj - (tr_replace(Wproj,[C,F],dims) - tr_replace(Wproj,[AO,C,F],dims) - tr_replace(Wproj,[BO,C,F],dims) - tr_replace(Wproj,[C,DO,F],dims) ...
-                             + tr_replace(Wproj,[AO,BO,C,F],dims) + tr_replace(Wproj,[AO,C,DO,F],dims) + tr_replace(Wproj,[BO,C,DO,F],dims) ...
-                             - tr_replace(Wproj,[AO,BO,C,DO,F],dims)); % (1-AO)(1-BO)C(1-DO)F
-            Wproj = Wproj - (tr_replace(Wproj,[B,F],dims) - tr_replace(Wproj,[AO,B,F],dims) - tr_replace(Wproj,[B,CO,F],dims) - tr_replace(Wproj,[B,DO,F],dims) ...
-                             + tr_replace(Wproj,[AO,B,CO,F],dims) + tr_replace(Wproj,[AO,B,DO,F],dims) + tr_replace(Wproj,[B,CO,DO,F],dims) ...
-                             - tr_replace(Wproj,[AO,B,CO,DO,F],dims)); % (1-AO)B(1-CO)(1-DO)F
-            Wproj = Wproj - (tr_replace(Wproj,[A,F],dims) - tr_replace(Wproj,[A,BO,F],dims) - tr_replace(Wproj,[A,CO,F],dims) - tr_replace(Wproj,[A,DO,F],dims) ...
-                             + tr_replace(Wproj,[A,BO,CO,F],dims) + tr_replace(Wproj,[A,BO,DO,F],dims) + tr_replace(Wproj,[A,CO,DO,F],dims) ...
-                             - tr_replace(Wproj,[A,BO,CO,DO,F],dims)); % A(1-BO)(1-CO)(1-DO)F
-
-            Wproj = Wproj - (tr_replace(Wproj,[F],dims) - tr_replace(Wproj,[AO,F],dims) - tr_replace(Wproj,[BO,F],dims) - tr_replace(Wproj,[CO,F],dims) - tr_replace(Wproj,[DO,F],dims) ...
-                             + tr_replace(Wproj,[AO,BO,F],dims) + tr_replace(Wproj,[AO,CO,F],dims) + tr_replace(Wproj,[AO,DO,F],dims) + tr_replace(Wproj,[BO,CO,F],dims) + tr_replace(Wproj,[BO,DO,F],dims) + tr_replace(Wproj,[CO,DO,F],dims) ...
-                             - tr_replace(Wproj,[AO,BO,CO,F],dims) - tr_replace(Wproj,[AO,BO,DO,F],dims) - tr_replace(Wproj,[AO,CO,DO,F],dims) - tr_replace(Wproj,[BO,CO,DO,F],dims) ...
-                             + tr_replace(Wproj,[AO,B0,CO,DO,F],dims)); % (1-AO)(1-BO)(1-CO)(1-DO)F
-            
-            Wproj = Wproj - (tr_replace(Wproj,[A,B,C,D,F],dims) - tr_replace(Wproj,[P,A,B,C,D,F],dims)); % (1-P)ABCDF
-        otherwise
-            disp('Check currently only implemented up to N=4.');
-            in_valid_cone = false;
-            return
-    end
+    % Project W onto space of valid superoperators
+    Wproj = project_onto_valid_superops(W,dims,parties);
 
     diff_valid_space = W - Wproj;
     if isa(diff_valid_space,'sdpvar')

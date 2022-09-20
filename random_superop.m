@@ -1,8 +1,7 @@
-function Wr = random_superop(dims,parties,R,superop_class)
+function Wr = random_superop(dims,parties,R)
 %random_superop Produces a random superoperator in the specified class
 %   W = random_superop(dims,parties,superop_class,R)
 %   dims, parties: specifies the desired structure of the superoperator
-%   superop_class: a string, one of: QCPAR, QCFO, GEN (default)
 %   R: the number of elements of the superinstrument (default: 1)
 %
 %   The sampling simply generates a random PSD matrix with the correct norm
@@ -14,10 +13,6 @@ function Wr = random_superop(dims,parties,R,superop_class)
 % Requires QETLAB for RandomDensityMatrix
 
 % Written by Alastair Abbott 2022, last modified 20 September 2022
-
-    if ~exist('superop_class','var')
-        superop_class = 'GEN';
-    end
 
     if ~exist('R','var')
         R = 1;
@@ -41,7 +36,7 @@ function Wr = random_superop(dims,parties,R,superop_class)
     W = d_O*RandomDensityMatrix(d);
 
     % Project onto valid subspace
-    Wr = project_onto_superop_subspace(W,dims_extended,parties_extended,superop_class);
+    Wr = project_onto_valid_superops(W,dims_extended,parties_extended);
 
     % Measure register to make R-element superop if R>1
     if R > 1
