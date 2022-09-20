@@ -31,12 +31,21 @@ function Wr = random_superop(dims,parties,R)
     for n = 1:N
         d_O = d_O*prod(dims(parties{n+1}{2}));
     end
+    d_I = d/d_O;
 
     % Generate a random PSD matrix
     W = d_O*RandomDensityMatrix(d);
 
     % Project onto valid subspace
     Wr = project_onto_valid_superops(W,dims_extended,parties_extended);
+
+    % Resulting process may not be PSD; add noise to make it so
+    eig_min = min(eig(Wr));
+    q = eig_min*d_I/(eig_min*d_I-1);
+    if eig_min < 0
+        noisyW = eye(d)/d_I;
+        Wr = q*noisyW + (1-q)*Wr;
+    end
 
     % Measure register to make R-element superop if R>1
     if R > 1
