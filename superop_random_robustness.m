@@ -4,7 +4,7 @@ function [r_opt, yalmip_out] = superop_random_robustness(Wr,dims,parties,superop
 %
 %   Computes the random robustness of the superinstrument Wr with respect to the given class
 %   of superoperators (by default, QC-CCs). 
-%   superop_class: a string, on of: QCPAR, QCFO, convQCFO, QCCC, QCQC
+%   superop_class: a string, one of: QCPAR, QCFO, convQCFO, QCCC, QCQC
 %   yalmip_options: Provide settings to be passed to yalmip (e.g., choosing SDP solver)
 %   unitary_ops: Calculate robustness corresponding to a witness with unitary operations for
 %               operations A_1,...,A_N. False by default.
