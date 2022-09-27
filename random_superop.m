@@ -4,7 +4,7 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
 %   dims, parties: specifies the desired structure of the superoperator
 %   R: the number of elements of the superinstrument (default: 1)
 %   sampling_method: the method used to sample random processes (default: 'pure_projection')
-%   yalmip_options: Yalmip options relevant for closest_norm_methods (see below)
+%   yalmip_options: Yalmip options relevant for closest_norm methods (see below)
 %
 %   Several sampling methods are possible:
 %   'pure_projection': a random projector is generated and scaled to have the correct norm. This is then
@@ -14,6 +14,7 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
 %   'closest_norm_X_pure': A random projector is generated and then an SDP is used to find the closest
 %                        valid superoperator wrt the X norm, where X is one of [1,2,inf,'fro','nuclear','*']
 %   'closest_norm_X_PSD': As above, but starting from a random PSD matrix
+%
 %   Note: no claims about the uniformity of these methods are made (none of them are uniform)
 %   For superinstruments, we essentially measure an extra R-dimensional space in F and take the resulting
 %   post-selected superoperators as the elements of the superinstrument
