@@ -12,8 +12,9 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
 %                      so that the resulting operator is PSD. This is the default option.
 %   'PSD_projection': as for 'pure_projection', except initially a random PSD matrix is generated.
 %   'closest_norm_X_pure': A random projector is generated and then an SDP is used to find the closest
-%                        valid superoperator wrt the X norm, where X is one of [1,2,inf,'fro','nuclear','*']
+%                        valid superoperator wrt the X norm, where X is one of ['1','2','inf','fro','nuclear','*']
 %   'closest_norm_X_PSD': As above, but starting from a random PSD matrix
+%   'closest_norm_pure','closest_norm_PSD': As above, but the default norm choice of '2' is used
 %
 %   Note: no claims about the uniformity of these methods are made (none of them are uniform)
 %   For superinstruments, we essentially measure an extra R-dimensional space in F and take the resulting
