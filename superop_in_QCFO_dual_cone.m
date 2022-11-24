@@ -5,12 +5,11 @@ function cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
 %   The order is assumed to be that in which the parties are specified
 %   Note: this doesn't check/enforce the normalisation of the superoperator
 %   
-%   Formulation based on: J. Wechs, H. Dourdent, A. A. Abbott, C. Branciard, PRX Quantum 2, 030335 (2021)
-%   (See Propositions 2 and 10 therein.)
+%   Formulation based on: J. Wechs, A. A. Abbott, C. Branciard, New J. Phys. 21, 013027 (2019)
 %
 % Requires QETLAB for PermuteSystems, PartialTrace
 
-% Written by Alastair Abbott (2022), last modified 29 August 2022
+% Written by Alastair Abbott (2022), last modified 24 November 2022
 
     % First put Sr in canonical ordering (this checks the input validity too)
     % The spaces P,AI,AO,...,F then correspond to dims 1,2,3,...,2*N+2
@@ -32,10 +31,9 @@ function cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
 
     %% We do this generically for arbitrary N
 
-    cone_constraints = [];
-
-    P = 1;
-    d_P = dims(P);
+    % Keep the logical and yalmip constraints separate until the end
+    constraints_logical = true;
+    constraints_yalmip = true;
 
     S_k1kN = sdpvar(d,d,'hermitian','complex');
 
@@ -44,18 +42,23 @@ function cone_constraints = superop_in_QCFO_dual_cone(Sr, dims, parties)
     for r = 1:R
         T_r{r} = Sr{r} - S_k1kN;
     end
-    cone_constraints = [cone_constraints, superop_in_PSD_cone(T_r)];
+    constraints_yalmip = [constraints_yalmip, superop_in_PSD_cone(T_r)];
 
-    % Now we check that S_k1kN is in the right space
-    S_proj = S_k1kN;
-    for n = N:-1:1
-        S_proj = S_proj - (tr_replace(S_proj,(2*n+2):(2*N+2),dims) - tr_replace(S_proj,(2*n+1):(2*N+2),dims));
+    %% Cone constraints
+    S_proj = project_onto_QCFOs(S_k1kN,dims,parties);
+    
+    if isa(S_proj,'sdpvar')
+        constraints_yalmip = [constraints_yalmip, S_proj == 0];
+    else
+        constraints_logical = [constraints_logical, matrix_is_equal(S_proj,zeros(d),tol)];
     end
 
-    if d_P ~= 1
-        S_proj = S_proj - (tr_replace(S_proj,2:(2*N+2),dims) - tr_replace(S_proj,1:(2*N+2),dims));
+    %% Combine the two types of constraints
+    constraints_logical = all(constraints_logical);
+    if constraints_logical == false
+        cone_constraints = false;
+    else
+        cone_constraints = constraints_yalmip;
     end
-
-    cone_constraints = [cone_constraints, S_proj == 0];
 end
 

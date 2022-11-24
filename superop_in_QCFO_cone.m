@@ -7,13 +7,10 @@ function in_QCFO_cone = superop_in_QCFO_cone(Wr, dims, parties,tol)
 %   The order is assumed to be that in which the parties are specified
 %   Default tolerance is 1e-6, and irrelevant for sdpvar constraints
 %   Note: this doesn't check/enforce the normalisation of the superoperator
-%   
-%   Formulation based on: J. Wechs, H. Dourdent, A. A. Abbott, C. Branciard, PRX Quantum 2, 030335 (2021)
-%   (See Propositions 2 and 10 therein.)
 %
 % Requires QETLAB for PermuteSystems, PartialTrace
 
-% Written by Alastair Abbott (2022), last modified 19 August 2022
+% Written by Alastair Abbott (2022), last modified 24 November 2022
 
     % default tolerance
     if ~exist('tol','var')
@@ -55,36 +52,14 @@ function in_QCFO_cone = superop_in_QCFO_cone(Wr, dims, parties,tol)
        W = W + Wr{r}; 
     end
 
-    %% We do this generically for arbitrary N
+    % Project W onto space of QCFOs
+    Wproj = project_onto_QCFOs(W,dims,parties);
 
-    P = 1;
-    d_P = dims(P);
-
-    % Define the reduced matrices
-    W_n = cell(1,N+1);
-    W_n{N+1} = W;
-    for n = N:-1:1
-        W_n{n} = 1/dims(2*n+1)*PartialTrace(W_n{n+1},[2*n+1,2*n+2],dims(1:(2*n+2)));
-    end
-
-    % And the corresponding constraints
-    for n = N:-1:1
-        diff = PartialTrace(W_n{n+1},2*n+2,dims(1:(2*n+2))) - tensor_id(W_n{n},dims(2*n+1));
-        if isa(diff,'sdpvar')
-            constraints_yalmip = [constraints_yalmip, diff == 0];
-        else
-            constraints_logical = [constraints_logical, matrix_is_equal(diff,zeros(size(diff)),tol)];
-        end
-    end
-
-    if d_P ~= 1 % Otherwise this is enforced by the normalisation of the input superinstrument
-        % We only want it to be proportional to the identity, since we are only checking the cone
-        diff_P_first = PartialTrace(W_n{1},2,dims([1,2])) - trace(W_n{1})/d_P*eye(d_P);
-        if isa(diff_P_first,'sdpvar')
-            constraints_yalmip = [constraints_yalmip, diff_P_first == 0];
-        else
-            constraints_logical = [constraints_logical, matrix_is_equal(diff_P_first,zeros(d_P),tol)];
-        end
+    diff_valid_space = W - Wproj;
+    if isa(diff_valid_space,'sdpvar')
+        constraints_yalmip = [constraints_yalmip, diff_valid_space == 0];
+    else
+        constraints_logical = [constraints_logical, matrix_is_equal(diff_valid_space,zeros(d),tol)];
     end
 
     % Combine the two types of constraints
