@@ -1,8 +1,9 @@
-function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
+function Wr = random_superop(dims,parties,R,superop_class,sampling_method,yalmip_options)
 %random_superop Produces a random superoperator in the specified class
 %   W = random_superop(dims,parties,R,sampling_method,yalmip_options)
 %   dims, parties: specifies the desired structure of the superoperator
 %   R: the number of elements of the superinstrument (default: 1)
+%   superop_class:  string, on of: QCPAR, QCFO, convQCFO, QCCC, QCQC, GEN (default: 'GEN')
 %   sampling_method: the method used to sample random processes (default: 'pure_projection')
 %   yalmip_options: Yalmip options relevant for closest_norm methods (see below)
 %
@@ -28,15 +29,26 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
         R = 1;
     end
 
+    if ~exist('superop_class','var')
+        % By default, we do for GEN
+        superop_class = 'GEN';
+    end
+
     valid_sampling_methods = {'pure_projection','psd_projection','closest_norm_pure','closest_norm_PSD',...
         'closest_norm_1_pure','closest_norm_2_pure','closest_norm_inf_pure','closest_norm_fro_pure','closest_norm_nuclear_pure','closest_norm_*_pure',...
         'closest_norm_1_psd','closest_norm_2_psd','closest_norm_inf_psd','closest_norm_fro_psd','closest_norm_nuclear_psd','closest_norm_*_psd'};
     
     if ~exist('sampling_method','var')
-        sampling_method = 'pure_projection';
+        sampling_method = 'closest_norm_2_pure';
     end
     sampling_method = lower(sampling_method);
     assert(contains(sampling_method,valid_sampling_methods),'Error: Unknown sampling method specified');
+
+    % Check the sampling method is compatible with the superop class
+    if contains(sampling_method,'projection') && ~contains(superop_class,{'GEN','QCFO'})
+        disp('Warning, projection-based sampling methods incompatible with specified superop class. Reverting to norm-based SDP sampling.');
+        sampling_method = 'closest_norm_2_pure';
+    end
 
     % Setup sampling type information
     pure_seed = false;
@@ -85,7 +97,12 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
 
     if projection_sampling
         % Project onto valid subspace
-        Wr = project_onto_valid_superops(W,dims_extended,parties_extended);
+        switch upper(superop_class)
+            case 'QCFO'
+                Wr = project_onto_QCFOs(W,dims_extended,parties_extended);
+            otherwise
+                Wr = project_onto_valid_superops(W,dims_extended,parties_extended);
+        end
     
         % Resulting process may not be PSD; add noise to make it so
         eig_min = min(eig(Wr));
@@ -97,7 +114,26 @@ function Wr = random_superop(dims,parties,R,sampling_method,yalmip_options)
     else
         % Otherwise we have an sdp to solve
         Wr = sdpvar(d,d,'hermitian','complex');
-        constr = is_valid_superop(Wr,dims_extended,parties_extended);
+        switch upper(superop_class)
+            case 'QCPAR'
+                constr = is_QCPAR(Wr,dims_extended,parties_extended);
+            case 'QCFO'
+                constr = is_QCFO(Wr,dims_extended,parties_extended);
+            case 'CONVQCFO'
+                constr = is_convQCFO(Wr,dims_extended,parties_extended);
+            case 'QCSUP'
+                constr = is_QCSup(Wr,dims_extended,parties_extended);
+            case 'QCCC'
+                constr = is_QCCC(Wr,dims_extended,parties_extended);
+            case 'QCQC'
+                constr = is_QCQC(Wr,dims_extended,parties_extended);
+            case 'GEN'
+                constr = is_valid_superop(Wr,dims_extended,parties_extended);
+            otherwise
+                disp('Warning, invalid superoperator type specified. Sampling a generic valid superop.')
+                constr = is_valid_superop(Wr,dims_extended,parties_extended);
+        end
+        
         if ~exist('yalmip_options','var')
             % default options
             yalmip_options = sdpsettings();
