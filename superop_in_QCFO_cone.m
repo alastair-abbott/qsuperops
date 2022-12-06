@@ -32,6 +32,7 @@ function in_QCFO_cone = superop_in_QCFO_cone(Wr, dims, parties,tol)
     
     R = length(Wr);
     N = length(parties) - 2;
+    d = prod(dims);
     
     %% Setup and check the elements are PSD
 
